@@ -16,8 +16,7 @@
 
 Name: kata-osbuilder
 Version: 1.4.1
-Release: 1.git%{shortcommit0}%{?dist}
-ExclusiveArch: x86_64
+Release: 2.git%{shortcommit0}%{?dist}
 License: ASL 2.0
 Summary: Guest OS building scripts
 URL: %{git0}
@@ -77,6 +76,9 @@ rm -rf %{katalibexecdir}/rootfs-builder/rootfs-Fedora
 %{katalibexecdir}/scripts/*
 
 %changelog
+* Thu Dec 13 2018 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.4.1-2.git72c5f6a
+- enable all arches
+
 * Thu Dec 13 2018 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.4.1-1.git72c5f6a
 - Resolves: #1590414 - first build for Fedora
 - bump to v1.4.1
