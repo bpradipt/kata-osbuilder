@@ -16,7 +16,7 @@
 
 Name: kata-osbuilder
 Version: 1.4.1
-Release: 2.git%{shortcommit0}%{?dist}
+Release: 3.git%{shortcommit0}%{?dist}
 License: ASL 2.0
 Summary: Guest OS building scripts
 URL: %{git0}
@@ -76,6 +76,9 @@ rm -rf %{katalibexecdir}/rootfs-builder/rootfs-Fedora
 %{katalibexecdir}/scripts/*
 
 %changelog
+* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.1-3.git72c5f6a
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Thu Dec 13 2018 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.4.1-2.git72c5f6a
 - enable all arches
 
