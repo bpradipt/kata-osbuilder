@@ -148,6 +148,11 @@ fi
 
 
 %changelog
+* Wed Sep 18 2019 Cole Robinson <aintdiscole@gmail.com> - 1.9.0-0.1.git8d682c4
+- Update to latest release 1.9.0alpha2
+- Use dracut as build method for initrd + image
+- Add fedora-kata-osbuilder.sh script that handls %post image building
+
 * Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.1-4.git72c5f6a
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
