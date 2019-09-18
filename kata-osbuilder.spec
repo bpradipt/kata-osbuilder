@@ -27,6 +27,11 @@ Release: 0.1.git%{shortcommit0}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
+
+ExcludeArch: %{arm}
+# Installing requires a kernel package, which isn't available i686
+ExcludeArch: %{ix86}
+
 Source0: %{git0}/archive/%{commit0}/osbuilder-%{shortcommit0}.tar.gz
 Source1: %{git1}/archive/%{commit1}/agent-%{shortcommit1}.tar.gz
 Source2: fedora-kata-osbuilder.sh
