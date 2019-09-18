@@ -90,7 +90,7 @@ Provides: bundled(golang(google.golang.org/grpc/status))
 
 %prep
 %autosetup -Sgit -n osbuilder-%{commit0}
-tar -xvf %{SOURCE1}
+tar -xvf %{SOURCE1} > /dev/null
 
 
 %build
