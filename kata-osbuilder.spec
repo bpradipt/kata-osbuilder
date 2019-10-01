@@ -48,8 +48,7 @@ Patch02: osbuilder-0002-rootfs-Fix-systemd-sbin-init-symlinking.patch
 Patch03: osbuilder-0003-dracut-Add-Fedora-virtio-kernel-modules-to-the-initr.patch
 
 BuildRequires: git
-BuildRequires: compiler(go-compiler)
-BuildRequires: go-srpm-macros
+BuildRequires: go-rpm-macros
 
 Requires(post): qemu-img
 Requires(post): dracut
