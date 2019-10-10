@@ -23,7 +23,7 @@
 
 Name: kata-osbuilder
 Version: 1.9.0
-Release: 0.1.git%{shortcommit0}%{?dist}
+Release: 0.2.git%{shortcommit0}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -147,6 +147,9 @@ fi
 
 
 %changelog
+* Thu Oct 10 2019 Cole Robinson <aintdiscole@gmail.com> - 1.9.0-0.2.git8d682c4
+- fedora-kata-osbuilder.sh: Limit what we delete on install
+
 * Wed Sep 18 2019 Cole Robinson <aintdiscole@gmail.com> - 1.9.0-0.1.git8d682c4
 - Update to latest release 1.9.0alpha2
 - Use dracut as build method for initrd + image

@@ -43,7 +43,7 @@ cat ${TARGET_INITRD} | \
 # Move images into place
 cd /usr/share/kata-containers
 # This is dangerous, but not sure what else to do...
-rm * || true
+rm vmlinu* kata-*.img fedora-kata*.img fedora-kata*.initrd || true
 
 KERNEL_NAME="vmlinuz-${KVERSION}"
 INITRD_NAME="fedora-kata-${KVERSION}.initrd"
