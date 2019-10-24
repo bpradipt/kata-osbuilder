@@ -50,7 +50,7 @@ INITRD_NAME="fedora-kata-${KVERSION}.initrd"
 IMAGE_NAME="fedora-kata-${KVERSION}.img"
 
 cp /boot/${KERNEL_NAME} .
-ln -sf /boot/${KERNEL_NAME} vmlinuz.container
+ln -sf ${KERNEL_NAME} vmlinuz.container
 
 mv ${TARGET_INITRD} ${INITRD_NAME}
 ln -sf ${INITRD_NAME} kata-containers-initrd.img

@@ -23,7 +23,7 @@
 
 Name: kata-osbuilder
 Version: 1.9.0
-Release: 0.2.git%{shortcommit0}%{?dist}
+Release: 0.3.git%{shortcommit0}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -147,6 +147,9 @@ fi
 
 
 %changelog
+* Thu Oct 24 2019 Cole Robinson <crobinso@redhat.com> - 1.9.0-0.3.git4287ba6
+- Link to kernel in /usr/share/kata-containers, not /boot
+
 * Thu Oct 10 2019 Cole Robinson <aintdiscole@gmail.com> - 1.9.0-0.2.git8d682c4
 - fedora-kata-osbuilder.sh: Limit what we delete on install
 
