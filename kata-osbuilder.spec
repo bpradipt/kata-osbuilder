@@ -23,7 +23,7 @@
 
 Name: kata-osbuilder
 Version: 1.9.0
-Release: 0.3.git%{shortcommit0}%{?dist}
+Release: 1%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -147,6 +147,9 @@ fi
 
 
 %changelog
+* Thu Nov 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0-1
+- Update to release 1.9.0
+
 * Thu Oct 24 2019 Cole Robinson <crobinso@redhat.com> - 1.9.0-0.3.git4287ba6
 - Link to kernel in /usr/share/kata-containers, not /boot
 
