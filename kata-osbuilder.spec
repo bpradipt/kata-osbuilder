@@ -19,7 +19,7 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -143,7 +143,10 @@ fi
 
 
 %changelog
-* Thu Nov 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0
+* Thu Nov 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0-2
+- Build from tag instead of commit
+
+* Thu Nov 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0-1
 - Update to release 1.9.0
 
 * Thu Oct 24 2019 Cole Robinson <crobinso@redhat.com> - 1.9.0-0.3.git4287ba6
