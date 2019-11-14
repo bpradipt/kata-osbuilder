@@ -7,22 +7,18 @@
 %global debug_package %{nil}
 %endif
 
-%global katadatadir %{_datadir}/kata-containers
-%global katalibexecdir %{_libexecdir}/kata-containers
-%global kataosbuilderdir %{katalibexecdir}/osbuilder
-%global kataagentdir %{kataosbuilderdir}/agent
+%global katadatadir             %{_datadir}/kata-containers
+%global katalibexecdir          %{_libexecdir}/kata-containers
+%global kataosbuilderdir        %{katalibexecdir}/osbuilder
+%global kataagentdir            %{kataosbuilderdir}/agent
 
-%global git0 https://github.com/kata-containers/osbuilder
-%global commit0 4287ba639bbec8f447295bb567636d939bcb4cfc
-%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
-
+%global tag                     1.9.0
+%global git0    https://github.com/kata-containers/osbuilder
 %global git1 https://github.com/kata-containers/agent
-%global commit1 8d682c45840d8bd76675879c8bbfffd9ef078838
-%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 
 Name: kata-osbuilder
-Version: 1.9.0
+Version: %{tag}
 Release: 1%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
@@ -32,8 +28,8 @@ ExcludeArch: %{arm}
 # Installing requires a kernel package, which isn't available i686
 ExcludeArch: %{ix86}
 
-Source0: %{git0}/archive/%{commit0}/osbuilder-%{shortcommit0}.tar.gz
-Source1: %{git1}/archive/%{commit1}/agent-%{shortcommit1}.tar.gz
+Source0: %{git0}/archive/%{version}/osbuilder-%{version}.tar.gz
+Source1: %{git1}/archive/%{version}/agent-%{version}.tar.gz
 Source2: fedora-kata-osbuilder.sh
 
 # Adjust rootfs.sh to pull more pieces from the kata-agent dir,
@@ -93,13 +89,13 @@ Provides: bundled(golang(google.golang.org/grpc/status))
 
 
 %prep
-%autosetup -Sgit -n osbuilder-%{commit0}
+%autosetup -Sgit -n osbuilder-%{version}
 tar -xvf %{SOURCE1} > /dev/null
 
 
 %build
 # Build kata-agent
-pushd agent-%{commit1}
+pushd agent-%{version}
 mkdir _build
 pushd _build
 mkdir -p src/github.com/kata-containers
@@ -123,7 +119,7 @@ cp -aR image-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR scripts %{buildroot}%{kataosbuilderdir}
 cp -aR dracut %{buildroot}%{kataosbuilderdir}
 cp -a %{_sourcedir}/fedora-kata-osbuilder.sh %{buildroot}%{kataosbuilderdir}
-cp -a agent-%{commit1}/{kata-*.service,kata-*.target,kata-agent} %{buildroot}%{kataagentdir}
+cp -a agent-%{version}/{kata-*.service,kata-*.target,kata-agent} %{buildroot}%{kataagentdir}
 
 
 %post
@@ -147,7 +143,7 @@ fi
 
 
 %changelog
-* Thu Nov 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0-1
+* Thu Nov 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0
 - Update to release 1.9.0
 
 * Thu Oct 24 2019 Cole Robinson <crobinso@redhat.com> - 1.9.0-0.3.git4287ba6
