@@ -1,0 +1,2 @@
+addFilter(r'spelling-error Summary(en_US) initrd -> trinity')
+addFilter(r'spelling-error %description -l en_US initrd -> trinity')
