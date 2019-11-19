@@ -19,7 +19,7 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -147,6 +147,15 @@ fi
 
 
 %changelog
+* Tue Nov 19 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0-3
+- Address various errors and warnings reported by rpmlint / rpmgrill:
++ Add rpmlintrc filter to address bogus spelling erorrs (initrd -> trinity)
++ Add rpmlintrc filter to remove golang macros warnings (no version number)
++ Rmove percent sign in changelog
++ Use SOURCE2 instead of _sourcedir to avoid rpmlint error
++ Add missing golang packages in the provides list (from golist)
++ Fix permission for fedora-kata-osbuilder.sh
+
 * Thu Nov 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0-2
 - Build from tag instead of commit
 
