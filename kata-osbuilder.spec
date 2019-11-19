@@ -122,7 +122,7 @@ cp -aR rootfs-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR image-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR scripts %{buildroot}%{kataosbuilderdir}
 cp -aR dracut %{buildroot}%{kataosbuilderdir}
-cp -a %{_sourcedir}/fedora-kata-osbuilder.sh %{buildroot}%{kataosbuilderdir}
+cp -a %{SOURCE2} %{buildroot}%{kataosbuilderdir}
 cp -a agent-%{version}/{kata-*.service,kata-*.target,kata-agent} %{buildroot}%{kataagentdir}
 
 
