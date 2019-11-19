@@ -19,7 +19,7 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -151,6 +151,9 @@ fi
 
 
 %changelog
+* Tue Nov 19 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0-4
+- Address remaining warnigns reported by rpmlint / rpmgrill, see bz1773629
+
 * Tue Nov 19 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0-3
 - Address various errors and warnings reported by rpmlint / rpmgrill:
 + Add rpmlintrc filter to address bogus spelling erorrs (initrd -> trinity)
