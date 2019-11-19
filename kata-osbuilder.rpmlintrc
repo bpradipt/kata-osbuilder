@@ -1,2 +1,5 @@
 addFilter(r'spelling-error Summary(en_US) initrd -> trinity')
 addFilter(r'spelling-error %description -l en_US initrd -> trinity')
+
+# Remove warnings regarding the bundled / goland macros not providing a version number
+addFilter(r'unversioned-explicit-provides bundled\(golang\(.*\)\)')
