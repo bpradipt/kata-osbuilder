@@ -125,7 +125,10 @@ cp -aR scripts %{buildroot}%{kataosbuilderdir}
 cp -aR dracut %{buildroot}%{kataosbuilderdir}
 cp -a %{SOURCE2} %{buildroot}%{kataosbuilderdir}
 cp -a agent-%{version}/{kata-*.service,kata-*.target,kata-agent} %{buildroot}%{kataagentdir}
-
+chmod +x %{buildroot}/%{kataosbuilderdir}/rootfs-builder/alpine/rootfs_lib.sh
+chmod +x %{buildroot}/%{kataosbuilderdir}/rootfs-builder/suse/install-packages.sh
+chmod +x %{buildroot}/%{kataosbuilderdir}/scripts/install-yq.sh
+chmod +x %{buildroot}/%{kataosbuilderdir}/scripts/lib.sh
 
 %post
 TMPOUT="$(mktemp -t kata-rpm-post-XXXXXX.log)"
