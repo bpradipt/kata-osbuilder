@@ -118,6 +118,7 @@ popd
 mkdir -p %{buildroot}%{katadatadir}
 mkdir -p %{buildroot}%{kataosbuilderdir}
 mkdir -p %{buildroot}%{kataagentdir}
+rm rootfs-builder/.gitignore
 cp -aR rootfs-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR image-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR scripts %{buildroot}%{kataosbuilderdir}
