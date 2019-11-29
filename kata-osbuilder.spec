@@ -12,14 +12,14 @@
 %global kataosbuilderdir        %{katalibexecdir}/osbuilder
 %global kataagentdir            %{kataosbuilderdir}/agent
 
-%global tag                     1.9.0
+%global tag                     1.9.1
 %global git0    https://github.com/kata-containers/osbuilder
 %global git1 https://github.com/kata-containers/agent
 
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 4%{?dist}
+Release: 1%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -151,6 +151,9 @@ fi
 
 
 %changelog
+* Fri Nov 29 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.1-1
+- Udpate to 1.9.1
+
 * Tue Nov 19 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.0-4
 - Address remaining warnigns reported by rpmlint / rpmgrill, see bz1773629
 
