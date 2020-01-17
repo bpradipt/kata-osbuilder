@@ -45,7 +45,7 @@ cat ${TARGET_INITRD} | \
 rm image-builder/nsdax
 
 # Move images into place
-cd /usr/share/kata-containers
+cd /var/cache/kata-containers
 # This is dangerous, but not sure what else to do...
 rm vmlinu* kata-*.img fedora-kata*.img fedora-kata*.initrd || true
 

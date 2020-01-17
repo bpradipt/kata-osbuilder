@@ -11,6 +11,7 @@
 %global katalibexecdir          %{_libexecdir}/kata-containers
 %global kataosbuilderdir        %{katalibexecdir}/osbuilder
 %global kataagentdir            %{kataosbuilderdir}/agent
+%global katalocalstatecachedir  %{_localstatedir}/cache/kata-containers
 
 %global tag                     1.9.1
 %global git0    https://github.com/kata-containers/osbuilder
@@ -118,6 +119,7 @@ popd
 mkdir -p %{buildroot}%{katadatadir}
 mkdir -p %{buildroot}%{kataosbuilderdir}
 mkdir -p %{buildroot}%{kataagentdir}
+mkdir -p %{buildroot}%{katalocalstatecachedir}
 rm rootfs-builder/.gitignore
 cp -aR rootfs-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR image-builder %{buildroot}/%{kataosbuilderdir}
@@ -145,14 +147,17 @@ fi
 %license LICENSE
 %doc CODE_OF_CONDUCT.md CONTRIBUTING.md README.md
 %dir %{katadatadir}
+%dir %{katalibexecdir}
 %dir %{kataosbuilderdir}
 %{kataosbuilderdir}/*
+%dir %{katalocalstatecachedir}
 
 
 
 %changelog
 * Fri Jan 17 2020 Fabiano Fidêncio <fidencio@redhat.com> - 1.9.1-2
 - Remove unneeded nsdax binary file - rhbz#1792216
+- Install images in /var/cache instead of /usr/libexec - rhbz#1792216
 
 * Fri Nov 29 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.1-1
 - Udpate to 1.9.1
