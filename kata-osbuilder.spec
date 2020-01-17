@@ -13,7 +13,7 @@
 %global kataagentdir            %{kataosbuilderdir}/agent
 %global katalocalstatecachedir  %{_localstatedir}/cache/kata-containers
 
-%global tag                     1.9.2
+%global tag                     1.9.3
 %global git0    https://github.com/kata-containers/osbuilder
 %global git1 https://github.com/kata-containers/agent
 
@@ -155,6 +155,9 @@ fi
 
 
 %changelog
+* Fri Jan 17 2020 Christophe de Dinechin <dinechin@redhat.com> - 1.9.3-1
+- Update to 1.9.3 (No change upstream)
+
 * Fri Jan 17 2020 Christophe de Dinechin <dinechin@redhat.com> - 1.9.2-1
 - Update to 1.9.2 (No change upstream)
 
