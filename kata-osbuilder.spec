@@ -19,7 +19,7 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -151,6 +151,9 @@ fi
 
 
 %changelog
+* Fri Jan 17 2020 Fabiano Fidêncio <fidencio@redhat.com> - 1.9.1-2
+- Remove unneeded nsdax binary file - rhbz#1792216
+
 * Fri Nov 29 2019 Christophe de Dinechin <dinechin@redhat.com> - 1.9.1-1
 - Udpate to 1.9.1
 

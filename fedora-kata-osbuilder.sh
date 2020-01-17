@@ -40,6 +40,10 @@ cat ${TARGET_INITRD} | \
 # Build the FS image
 ./image-builder/image_builder.sh -o ${TARGET_IMAGE} ${DRACUT_ROOTFS}
 
+# This is a workaround till issue[0] is fixed, released and packaged.
+# [0]: https://github.com/kata-containers/osbuilder/issues/394
+rm image-builder/nsdax
+
 # Move images into place
 cd /usr/share/kata-containers
 # This is dangerous, but not sure what else to do...
