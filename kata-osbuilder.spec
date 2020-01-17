@@ -13,14 +13,14 @@
 %global kataagentdir            %{kataosbuilderdir}/agent
 %global katalocalstatecachedir  %{_localstatedir}/cache/kata-containers
 
-%global tag                     1.9.1
+%global tag                     1.9.2
 %global git0    https://github.com/kata-containers/osbuilder
 %global git1 https://github.com/kata-containers/agent
 
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 2%{?dist}
+Release: 1%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -155,6 +155,9 @@ fi
 
 
 %changelog
+* Fri Jan 17 2020 Christophe de Dinechin <dinechin@redhat.com> - 1.9.2-1
+- Update to 1.9.2 (No change upstream)
+
 * Fri Jan 17 2020 Fabiano Fidêncio <fidencio@redhat.com> - 1.9.1-2
 - Remove unneeded nsdax binary file - rhbz#1792216
 - Install images in /var/cache instead of /usr/libexec - rhbz#1792216
