@@ -23,7 +23,7 @@ index 121e858..e45b75a 100644
 +#drivers=""
 +
 +# Fedora: add kata virtio modules to the initrd.
-+drivers="9p 9pnet_virtio vmw_vsock_virtio_transport virtio_console virtio_blk virtio_scsi virtio_net"
++drivers="vmw_vsock_virtio_transport virtio_console virtio_blk virtio_scsi virtio_net fuse virtiofs"
 -- 
 2.21.0
 
