@@ -33,6 +33,7 @@ Source0: %{git0}/archive/%{version}/osbuilder-%{version}.tar.gz
 Source1: %{git1}/archive/%{version}/agent-%{version}.tar.gz
 Source2: fedora-kata-osbuilder.sh
 Source3: kata-osbuilder-generate.service
+Source4: agent-0001-mount-Use-virtiofs-instead-of-virtio_fs-as-typeVirti.patch
 
 # Adjust rootfs.sh to pull more pieces from the kata-agent dir,
 # like systemd units. Not acceptable as is for upstream, we need
@@ -101,6 +102,9 @@ Provides: bundled(golang(google.golang.org/grpc/status))
 %prep
 %autosetup -Sgit -n osbuilder-%{version}
 tar -xvf %{SOURCE1} > /dev/null
+pushd agent-%{version}
+patch -p1 < %{SOURCE4}
+popd
 
 
 %build

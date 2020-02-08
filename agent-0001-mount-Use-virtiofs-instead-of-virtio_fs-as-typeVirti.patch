@@ -1,0 +1,54 @@
+From 69f807d45f1eafa2694d50619c79bee64fec178a Mon Sep 17 00:00:00 2001
+From: Fabiano Fidêncio <fidencio@redhat.com>
+Date: Thu, 6 Feb 2020 22:02:19 +0100
+Subject: [PATCH] mount: Use virtiofs instead of virtio_fs as typeVirtioFS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+virtio_fs was used in the early stages of the driver development
+
+Signed-off-by: Fabiano Fidêncio <fidencio@redhat.com>
+---
+ mount.go      | 2 +-
+ mount_test.go | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/agent-1.10.0/mount.go b/agent-1.10.0/mount.go
+index b824b8f..8988646 100644
+--- a/mount.go
++++ b/mount.go
+@@ -27,7 +27,7 @@ import (
+ 
+ const (
+ 	type9pFs       = "9p"
+-	typeVirtioFS   = "virtio_fs"
++	typeVirtioFS   = "virtiofs"
+ 	typeRootfs     = "rootfs"
+ 	typeTmpFs      = "tmpfs"
+ 	procMountStats = "/proc/self/mountstats"
+diff --git a/mount_test.go b/mount_test.go
+index 684a018..e13ed07 100644
+--- a/mount_test.go
++++ b/mount_test.go
+@@ -445,14 +445,14 @@ func TestMount(t *testing.T) {
+ 		{"", "/foo", "9p", 0, "", true},
+ 		{"proc", "", "9p", 0, "", true},
+ 		{"proc", "/proc", "", 0, "", true},
+-		{"proc", "", "virtio_fs", 0, "", true},
+-		{"proc", subdir, "virtio_fs", 0, "", true},
++		{"proc", "", "virtiofs", 0, "", true},
++		{"proc", subdir, "virtiofs", 0, "", true},
+ 		{"proc", subdir, "foo", 0, "", true},
+ 		{symLinkName, symLinkDest, "moo", 0, "", true},
+ 		{existsFile, existingNonCreatableFile, "bind", 0, "", true},
+ 		{"tmpfs", validSubdir, "tmpfs", 0, "", true},
+ 		{"proc", validSubdir, "9p", 0, "", true},
+-		{"proc", validSubdir, "virtio_fs", 0, "", true},
++		{"proc", validSubdir, "virtiofs", 0, "", true},
+ 	}
+ 
+ 	for i, d := range data {
+-- 
+2.18.1
+
