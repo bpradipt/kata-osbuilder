@@ -71,12 +71,10 @@ cd /var/cache/kata-containers
 # This is dangerous, but not sure what else to do...
 rm vmlinu* kata-*.img fedora-kata*.img fedora-kata*.initrd || true
 
-KERNEL_NAME="vmlinuz-${KVERSION}"
 INITRD_NAME="fedora-kata-${KVERSION}.initrd"
 IMAGE_NAME="fedora-kata-${KVERSION}.img"
 
-cp ${KERNEL_PATH} .
-ln -sf ${KERNEL_NAME} vmlinuz.container
+ln -sf ${KERNEL_PATH} vmlinuz.container
 
 mv ${TARGET_INITRD} ${INITRD_NAME}
 ln -sf ${INITRD_NAME} kata-containers-initrd.img
