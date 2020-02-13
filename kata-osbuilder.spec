@@ -58,6 +58,7 @@ Requires: bash
 Requires: kernel
 # mkfs.ext4 and tune2fs needed for the image build step
 Requires: e2fsprogs
+Requires: parted
 # gcc is used for building a little dax tool in image_builder.sh
 Requires: gcc
 
