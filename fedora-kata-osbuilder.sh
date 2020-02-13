@@ -15,6 +15,7 @@ die()
 
 
 IMAGE_TOPDIR="/var/cache/kata-containers"
+KERNEL_SYMLINK="${IMAGE_TOPDIR}/vmlinuz.container"
 
 KVERSION=`uname -r`
 KERNEL_PATH=""
@@ -27,6 +28,13 @@ for VMNAME in vmlinuz vmlinux; do
 done
 
 [ -z "$KERNEL_PATH" ] && die "$0: Didn't find kernel path for version=$KVERSION"
+
+LINKED_KERNEL=$(readlink -n "${KERNEL_SYMLINK}" || :)
+if [ "${KERNEL_PATH}" = "${LINKED_KERNEL}" ] ; then
+    echo "$0: symlink=${KERNEL_SYMLINK} already points to host kernel=${KERNEL_PATH}"
+    echo "$0: Nothing to generate. Exiting."
+    exit 0
+fi
 
 
 cd /usr/libexec/kata-containers/osbuilder
@@ -78,7 +86,7 @@ IMAGE_NAME="${IMAGE_DIR}/fedora-kata-${KVERSION}.img"
 rm -rf "${IMAGE_OSBUILDER_DIR}"
 mkdir -p "${IMAGE_DIR}"
 
-ln -sf ${KERNEL_PATH} ${IMAGE_TOPDIR}/vmlinuz.container
+ln -sf ${KERNEL_PATH} ${KERNEL_SYMLINK}
 
 mv ${TARGET_INITRD} ${INITRD_NAME}
 ln -sf ${INITRD_NAME} ${IMAGE_TOPDIR}/kata-containers-initrd.img
