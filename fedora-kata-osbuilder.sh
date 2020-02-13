@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script builds the kata appliance initrd and image. It is invoked
-# at RPM install %post time.
+# at RPM install %post time and via kata-osbuilder-generate.service
 
 set -e
 set -x

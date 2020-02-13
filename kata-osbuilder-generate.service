@@ -1,0 +1,9 @@
+[Unit]
+Description=Generate Kata appliance image for host kernel
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/kata-containers/fedora-kata-osbuilder.sh
+
+[Install]
+WantedBy=multi-user.target

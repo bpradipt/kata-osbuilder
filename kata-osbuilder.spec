@@ -32,6 +32,7 @@ ExcludeArch: %{ix86}
 Source0: %{git0}/archive/%{version}/osbuilder-%{version}.tar.gz
 Source1: %{git1}/archive/%{version}/agent-%{version}.tar.gz
 Source2: fedora-kata-osbuilder.sh
+Source3: kata-osbuilder-generate.service
 
 # Adjust rootfs.sh to pull more pieces from the kata-agent dir,
 # like systemd units. Not acceptable as is for upstream, we need
@@ -46,16 +47,19 @@ Patch03: osbuilder-0003-dracut-Add-Fedora-virtio-kernel-modules-to-the-initr.pat
 
 BuildRequires: git
 BuildRequires: go-rpm-macros
+BuildRequires: systemd
+%{?systemd_requires}
 
-Requires(post): qemu-img
-Requires(post): dracut
-Requires(post): cpio
-Requires(post): bash
-Requires(post): kernel
+# image build deps
+Requires: qemu-img
+Requires: dracut
+Requires: cpio
+Requires: bash
+Requires: kernel
 # mkfs.ext4 and tune2fs needed for the image build step
-Requires(post): e2fsprogs
+Requires: e2fsprogs
 # gcc is used for building a little dax tool in image_builder.sh
-Requires(post): gcc
+Requires: gcc
 
 # Bundled kata-agent pieces
 Provides: bundled(golang(github.com/docker/docker/pkg/parsers))
@@ -132,7 +136,16 @@ chmod +x %{buildroot}/%{kataosbuilderdir}/rootfs-builder/suse/install-packages.s
 chmod +x %{buildroot}/%{kataosbuilderdir}/scripts/install-yq.sh
 chmod +x %{buildroot}/%{kataosbuilderdir}/scripts/lib.sh
 
+install -m 0644 -D -t %{buildroot}%{_unitdir} %{_sourcedir}/kata-osbuilder-generate.service
+
+
+%preun
+%systemd_preun kata-osbuilder-generate.service
+%postun
+%systemd_postun kata-osbuilder-generate.service
 %post
+%systemd_post kata-osbuilder-generate.service
+
 TMPOUT="$(mktemp -t kata-rpm-post-XXXXXX.log)"
 echo "Creating kata appliance initrd and filesystem image..."
 bash %{kataosbuilderdir}/fedora-kata-osbuilder.sh > ${TMPOUT} 2>&1
@@ -151,6 +164,7 @@ fi
 %dir %{kataosbuilderdir}
 %{kataosbuilderdir}/*
 %dir %{katalocalstatecachedir}
+%{_unitdir}/kata-osbuilder-generate.service
 
 
 
