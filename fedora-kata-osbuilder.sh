@@ -4,7 +4,6 @@
 # at RPM install %post time and via kata-osbuilder-generate.service
 
 set -e
-set -x
 
 cd /usr/libexec/kata-containers/osbuilder
 
