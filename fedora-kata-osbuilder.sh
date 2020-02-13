@@ -14,9 +14,23 @@ die()
 [ "$(id -u)" -eq 0 ] || die "$0: must be run as root"
 
 
+IMAGE_TOPDIR="/var/cache/kata-containers"
+KVERSION=`uname -r`
+IMAGE_DIR="${IMAGE_TOPDIR}/osbuilder-images/$KVERSION"
+KERNEL_PATH=""
+for VMNAME in vmlinuz; do
+    TRYPATH="/lib/modules/$KVERSION/$VMNAME"
+    if [ -e "$TRYPATH" ] ; then
+        KERNEL_PATH="$TRYPATH"
+        break
+    fi
+done
+
+[ -z "$KERNEL_PATH" ] && die "$0: Didn't find kernel path for version=$KVERSION"
+
+
 cd /usr/libexec/kata-containers/osbuilder
 
-KVERSION=`uname -r`
 DRACUT_OVERLAY=`mktemp --directory -t kata-dracut-overlay-XXXXXX`
 DRACUT_ROOTFS=`mktemp --directory -t kata-dracut-rootfs-XXXXXX`
 DRACUT_IMAGES=`mktemp --directory -t kata-dracut-images-XXXXXX`
@@ -61,7 +75,7 @@ KERNEL_NAME="vmlinuz-${KVERSION}"
 INITRD_NAME="fedora-kata-${KVERSION}.initrd"
 IMAGE_NAME="fedora-kata-${KVERSION}.img"
 
-cp /boot/${KERNEL_NAME} .
+cp ${KERNEL_PATH} .
 ln -sf ${KERNEL_NAME} vmlinuz.container
 
 mv ${TARGET_INITRD} ${INITRD_NAME}
