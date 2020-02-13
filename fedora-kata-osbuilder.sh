@@ -5,6 +5,15 @@
 
 set -e
 
+die()
+{
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+[ "$(id -u)" -eq 0 ] || die "$0: must be run as root"
+
+
 cd /usr/libexec/kata-containers/osbuilder
 
 KVERSION=`uname -r`
