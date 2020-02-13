@@ -15,8 +15,8 @@ die()
 
 
 IMAGE_TOPDIR="/var/cache/kata-containers"
+
 KVERSION=`uname -r`
-IMAGE_DIR="${IMAGE_TOPDIR}/osbuilder-images/$KVERSION"
 KERNEL_PATH=""
 for VMNAME in vmlinuz vmlinux; do
     TRYPATH="/lib/modules/$KVERSION/$VMNAME"
@@ -66,18 +66,22 @@ cat ${TARGET_INITRD} | \
 # [0]: https://github.com/kata-containers/osbuilder/issues/394
 rm image-builder/nsdax
 
+
 # Move images into place
-cd /var/cache/kata-containers
-# This is dangerous, but not sure what else to do...
-rm vmlinu* kata-*.img fedora-kata*.img fedora-kata*.initrd || true
+IMAGE_OSBUILDER_DIR="${IMAGE_TOPDIR}/osbuilder-images"
+IMAGE_DIR="${IMAGE_OSBUILDER_DIR}/$KVERSION"
+INITRD_NAME="${IMAGE_DIR}/fedora-kata-${KVERSION}.initrd"
+IMAGE_NAME="${IMAGE_DIR}/fedora-kata-${KVERSION}.img"
 
-INITRD_NAME="fedora-kata-${KVERSION}.initrd"
-IMAGE_NAME="fedora-kata-${KVERSION}.img"
+# This blows away the entire osbuilder-images/ dir, deleting any
+# previously cached content
+rm -rf "${IMAGE_OSBUILDER_DIR}"
+mkdir -p "${IMAGE_DIR}"
 
-ln -sf ${KERNEL_PATH} vmlinuz.container
+ln -sf ${KERNEL_PATH} ${IMAGE_TOPDIR}/vmlinuz.container
 
 mv ${TARGET_INITRD} ${INITRD_NAME}
-ln -sf ${INITRD_NAME} kata-containers-initrd.img
+ln -sf ${INITRD_NAME} ${IMAGE_TOPDIR}/kata-containers-initrd.img
 
 mv ${TARGET_IMAGE} ${IMAGE_NAME}
-ln -sf ${IMAGE_NAME} kata-containers.img
+ln -sf ${IMAGE_NAME} ${IMAGE_TOPDIR}/kata-containers.img
