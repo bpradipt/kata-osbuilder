@@ -18,7 +18,7 @@ IMAGE_TOPDIR="/var/cache/kata-containers"
 KVERSION=`uname -r`
 IMAGE_DIR="${IMAGE_TOPDIR}/osbuilder-images/$KVERSION"
 KERNEL_PATH=""
-for VMNAME in vmlinuz; do
+for VMNAME in vmlinuz vmlinux; do
     TRYPATH="/lib/modules/$KVERSION/$VMNAME"
     if [ -e "$TRYPATH" ] ; then
         KERNEL_PATH="$TRYPATH"
