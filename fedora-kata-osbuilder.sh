@@ -13,6 +13,9 @@ die()
 
 [ "$(id -u)" -eq 0 ] || die "$0: must be run as root"
 
+COMMAND="$1"
+[ -z "$COMMAND" ] && COMMAND="check"
+[ "$COMMAND" != "check" -a "$COMMAND" != "regenerate" ] && die "$0: Unknown command=$COMMAND"
 
 IMAGE_TOPDIR="/var/cache/kata-containers"
 KERNEL_SYMLINK="${IMAGE_TOPDIR}/vmlinuz.container"
@@ -29,11 +32,13 @@ done
 
 [ -z "$KERNEL_PATH" ] && die "$0: Didn't find kernel path for version=$KVERSION"
 
-LINKED_KERNEL=$(readlink -n "${KERNEL_SYMLINK}" || :)
-if [ "${KERNEL_PATH}" = "${LINKED_KERNEL}" ] ; then
-    echo "$0: symlink=${KERNEL_SYMLINK} already points to host kernel=${KERNEL_PATH}"
-    echo "$0: Nothing to generate. Exiting."
-    exit 0
+if [ "regenerate" != "$COMMAND" ]; then
+    LINKED_KERNEL=$(readlink -n "${KERNEL_SYMLINK}" || :)
+    if [ "${KERNEL_PATH}" = "${LINKED_KERNEL}" ] ; then
+        echo "$0: symlink=${KERNEL_SYMLINK} already points to host kernel=${KERNEL_PATH}"
+        echo "$0: Nothing to generate. Exiting."
+        exit 0
+    fi
 fi
 
 
