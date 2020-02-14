@@ -59,7 +59,7 @@ DRACUT_KMODULES=`source ${DRACUT_CONF_DIR}/10-drivers.conf; echo "$drivers"`
 DRACUT_OPTIONS="--no-compress --conf /dev/null --confdir ./dracut/dracut.conf.d"
 
 # Build the dracut overlay fs
-./rootfs-builder/rootfs.sh -o ${OSBUILDER_VERSION} -r ${DRACUT_OVERLAY}
+EXTRA_PKGS="bash coreutils" ./rootfs-builder/rootfs.sh -o ${OSBUILDER_VERSION} -r ${DRACUT_OVERLAY}
 mkdir -p ${DRACUT_OVERLAY}/etc/modules-load.d
 echo ${DRACUT_KMODULES} | tr " " "\n" > ${DRACUT_OVERLAY}/etc/modules-load.d/kata-modules.conf
 
