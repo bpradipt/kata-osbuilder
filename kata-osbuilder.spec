@@ -45,6 +45,9 @@ Patch02: osbuilder-0002-rootfs-Fix-systemd-sbin-init-symlinking.patch
 # List of drivers needed in the initrd.
 # Needs to be submitted upstream
 Patch03: osbuilder-0003-dracut-Add-Fedora-virtio-kernel-modules-to-the-initr.patch
+# List of modules added to dracut.
+# Needs to be submitted upstream
+Patch04: osbuilder-0004-Add-bash-busybox-and-rescue-as-part-of-base-modules.patch
 
 BuildRequires: git
 BuildRequires: go-rpm-macros
