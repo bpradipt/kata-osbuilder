@@ -20,7 +20,7 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -170,6 +170,9 @@ fi
 
 
 %changelog
+* Fri Feb 14 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-3
+- Add kata-osbuilder-generate.service
+
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.10.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
