@@ -20,7 +20,7 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -177,6 +177,10 @@ fi
 
 
 %changelog
+* Sat Feb 15 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-4
+- Fixes for virtio-fs
+- Add modules to aid debugging appliance initrd/image
+
 * Fri Feb 14 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-3
 - Add kata-osbuilder-generate.service
 
