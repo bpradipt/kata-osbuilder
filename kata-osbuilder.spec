@@ -20,7 +20,7 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -60,6 +60,7 @@ Requires: dracut
 Requires: cpio
 Requires: bash
 Requires: kernel
+Requires: busybox
 # mkfs.ext4 and tune2fs needed for the image build step
 Requires: e2fsprogs
 Requires: parted
@@ -177,6 +178,9 @@ fi
 
 
 %changelog
+* Mon Feb 17 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-5
+- Add runtime busybox dep, for dracut debug modules
+
 * Sat Feb 15 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-4
 - Fixes for virtio-fs
 - Add modules to aid debugging appliance initrd/image
