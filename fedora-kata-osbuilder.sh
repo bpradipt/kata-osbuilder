@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# This script builds the kata appliance initrd and image. It is invoked
-# at RPM install %post time and via kata-osbuilder-generate.service
-
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -29,8 +26,14 @@ COMMAND=""
 
 die()
 {
-    echo "ERROR: ${SCRIPTNAME}: $*" >&2
+    error "$*"
     exit 1
+}
+
+
+error()
+{
+    echo "ERROR: ${SCRIPTNAME}: $*" >&2
 }
 
 
@@ -46,12 +49,45 @@ exit_handler()
 }
 
 
+usage()
+{
+    cat <<EOT
+
+Usage: ${SCRIPTNAME} [options]
+
+This script builds the kata appliance initrd and image and adds
+stable symlink paths in ${IMAGE_TOPDIR}
+
+This script is called at kata-osbuilder at RPM install %post time and
+via kata-osbuilder-generate.service
+
+Options:
+  -c        Check if an initrd is already generated for the current
+              kernel, and if so, simply exit
+  -h        Show this help message
+
+EOT
+
+    exit $1
+}
+
+
 parse_args()
 {
-    COMMAND="${1:-}"
-    [ -z "$COMMAND" ] && COMMAND="check"
-    [ "$COMMAND" != "check" ] && [ "$COMMAND" != "regenerate" ] && die "Unknown command=$COMMAND"
-    return 0
+    while getopts "ch" opt
+    do
+        case $opt in
+            c) COMMAND="check" ;;
+            h)	usage 0 ;;
+            *) usage 1 ;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    if [ -n "$*" ]; then
+        error "Unhandled options: '$*'"
+        usage 1
+    fi
 }
 
 
@@ -68,7 +104,7 @@ find_host_kernel_path()
 
     [ -z "$KERNEL_PATH" ] && die "Didn't find kernel path for version=$KVERSION"
 
-    if [ "regenerate" != "$COMMAND" ]; then
+    if [ "$COMMAND" = "check" ]; then
         local linked_kernel=$(readlink -n "${KERNEL_SYMLINK}" || :)
         if [ "${KERNEL_PATH}" = "${linked_kernel}" ] ; then
             info "symlink=${KERNEL_SYMLINK} already points to host kernel=${KERNEL_PATH}"
@@ -104,9 +140,10 @@ move_images()
 
 main()
 {
+    parse_args $*
+
     [ "$(id -u)" -eq 0 ] || die "$0: must be run as root"
 
-    parse_args $*
     find_host_kernel_path
 
     cd /usr/libexec/kata-containers/osbuilder

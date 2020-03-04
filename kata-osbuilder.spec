@@ -157,7 +157,7 @@ install -m 0644 -D -t %{buildroot}%{_unitdir} %{_sourcedir}/kata-osbuilder-gener
 
 TMPOUT="$(mktemp -t kata-rpm-post-XXXXXX.log)"
 echo "Creating kata appliance initrd and filesystem image..."
-bash %{kataosbuilderdir}/fedora-kata-osbuilder.sh regenerate > ${TMPOUT} 2>&1
+bash %{kataosbuilderdir}/fedora-kata-osbuilder.sh > ${TMPOUT} 2>&1
 if test "$?" != "0" ; then
     echo "Building failed. See log for details: ${TMPOUT}"
     exit 1

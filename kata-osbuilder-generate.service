@@ -3,8 +3,8 @@ Description=Generate Kata appliance image for host kernel
 
 [Service]
 Type=oneshot
-ExecStart=/usr/libexec/kata-containers/fedora-kata-osbuilder.sh
-ExecReload=/usr/libexec/kata-containers/fedora-kata-osbuilder.sh regenerate
+ExecStart=/usr/libexec/kata-containers/fedora-kata-osbuilder.sh -c
+ExecReload=/usr/libexec/kata-containers/fedora-kata-osbuilder.sh
 
 [Install]
 WantedBy=multi-user.target
