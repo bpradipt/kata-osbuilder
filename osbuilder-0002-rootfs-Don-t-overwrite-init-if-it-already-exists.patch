@@ -1,0 +1,33 @@
+From 80645c689418f13d6fbe60e8c87ca16787705687 Mon Sep 17 00:00:00 2001
+From: Cole Robinson <crobinso@redhat.com>
+Date: Wed, 4 Mar 2020 17:56:03 -0500
+Subject: [PATCH] rootfs: Don't overwrite /init if it already exists
+
+Signed-off-by: Cole Robinson <crobinso@redhat.com>
+---
+ rootfs-builder/rootfs.sh | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/rootfs-builder/rootfs.sh b/rootfs-builder/rootfs.sh
+index 5a5655e..554ed67 100755
+--- a/rootfs-builder/rootfs.sh
++++ b/rootfs-builder/rootfs.sh
+@@ -455,9 +455,15 @@ prepare_overlay()
+ {
+ 	pushd "${ROOTFS_DIR}" > /dev/null
+ 	mkdir -p ./etc ./lib/systemd ./sbin ./var
+-	ln -sf  ./usr/lib/systemd/systemd ./init
+-	ln -sf  ../../init ./lib/systemd/systemd
+-	ln -sf  ../init ./sbin/init
++	if [ ! -e ./init ]; then
++		# This symlink hacking is mostly to make later rootfs
++		# validation work correctly for the dracut case.
++		# We skip this if /init exists in the rootfs, meaning
++		# we were passed a pre-populated rootfs directory
++		ln -sf  ./usr/lib/systemd/systemd ./init
++		ln -sf  ../../init ./lib/systemd/systemd
++		ln -sf  ../init ./sbin/init
++	fi
+ 	# Kata sytemd unit file
+ 	mkdir -p ./etc/systemd/system/basic.target.wants/
+ 	ln -sf /usr/lib/systemd/system/kata-containers.target ./etc/systemd/system/basic.target.wants/kata-containers.target

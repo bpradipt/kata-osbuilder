@@ -41,7 +41,7 @@ Source4: agent-0001-mount-Use-virtiofs-instead-of-virtio_fs-as-typeVirti.patch
 Patch01: osbuilder-0001-rootfs-allow-using-systemd-units-from-AGENT_SOURCE_B.patch
 # Fix symlinks in the dracut_overlay to not clobber Fedora.
 # Needs to be submitted upstream
-Patch02: osbuilder-0002-rootfs-Fix-systemd-sbin-init-symlinking.patch
+Patch02: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
 # List of drivers needed in the initrd.
 # Needs to be submitted upstream
 Patch03: osbuilder-0003-dracut-Add-Fedora-virtio-kernel-modules-to-the-initr.patch
@@ -136,6 +136,7 @@ mkdir -p %{buildroot}%{katalocalstatecachedir}
 rm rootfs-builder/.gitignore
 cp -aR rootfs-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR image-builder %{buildroot}/%{kataosbuilderdir}
+cp -aR initrd-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR scripts %{buildroot}%{kataosbuilderdir}
 cp -aR dracut %{buildroot}%{kataosbuilderdir}
 cp -a %{SOURCE2} %{buildroot}%{kataosbuilderdir}

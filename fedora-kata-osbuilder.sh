@@ -11,7 +11,6 @@ readonly KERNEL_SYMLINK="${IMAGE_TOPDIR}/vmlinuz.container"
 readonly KVERSION=`uname -r`
 readonly SCRIPTNAME="$0"
 
-readonly DRACUT_OVERLAY=`mktemp --directory -t kata-dracut-overlay-XXXXXX`
 readonly DRACUT_ROOTFS=`mktemp --directory -t kata-dracut-rootfs-XXXXXX`
 readonly DRACUT_IMAGES=`mktemp --directory -t kata-dracut-images-XXXXXX`
 trap exit_handler EXIT
@@ -46,7 +45,7 @@ info()
 
 exit_handler()
 {
-    rm -rf "${DRACUT_OVERLAY}" "${DRACUT_ROOTFS}" "${DRACUT_IMAGES}"
+    rm -rf "${DRACUT_ROOTFS}" "${DRACUT_IMAGES}"
 }
 
 
@@ -122,6 +121,53 @@ find_host_kernel_path()
 }
 
 
+generate_rootfs()
+{
+    # To generate the rootfs, we build an initrd with dracut, extract
+    # the initrd content, and then discard the initrd. We then rebuild
+    # the initrd using the osbuilder native scripts.
+    #
+    # This is a bit wasteful, but it's the easiest way to work around
+    # obuilder script inflexibility for now, which expect that some rootfs.sh
+    # code is called on a fully populated distro root.
+
+    local agent_source_bin="/usr/libexec/kata-containers/osbuilder/agent/kata-agent"
+    local osbuilder_version="fedora-osbuilder-version-unknown"
+    local dracut_conf_dir="./dracut/dracut.conf.d"
+    local dracut_kmodules=`source ${dracut_conf_dir}/10-drivers.conf; echo "$drivers"`
+    local tmp_initrd=`mktemp --tmpdir=${DRACUT_IMAGES}`
+    unlink "$tmp_initrd"
+
+    # Build the initrd
+    echo -e "+ Building dracut initrd"
+    dracut  \
+        --confdir "${dracut_conf_dir}" \
+        --no-compress \
+        --conf /dev/null \
+        ${tmp_initrd} ${KVERSION}
+
+    # Extract the generated rootfs
+    echo "+ Extracting dracut initrd rootfs"
+    cat ${tmp_initrd} | \
+        cpio --extract --preserve-modification-time --make-directories --directory=${DRACUT_ROOTFS}
+
+    # Using the busybox dracut module sets /sbin/init -> busybox
+    # We don't want that. Reset it to systemd
+    ln -sf ../lib/systemd/systemd ${DRACUT_ROOTFS}/usr/sbin/init
+
+    # Make kata specific adjustments to our rootfs
+    echo "Calling osbuilder rootfs.sh on extracted rootfs"
+    AGENT_SOURCE_BIN="${agent_source_bin}" \
+        ./rootfs-builder/rootfs.sh \
+        -o ${osbuilder_version} \
+        -r ${DRACUT_ROOTFS}
+
+    # Add modules-load.d file for all our manually specified drivers
+    mkdir -p ${DRACUT_ROOTFS}/etc/modules-load.d
+    echo ${dracut_kmodules} | tr " " "\n" > ${DRACUT_ROOTFS}/etc/modules-load.d/kata-modules.conf
+}
+
+
 move_images()
 {
     # Move images into place
@@ -155,34 +201,20 @@ main()
 
     cd "${OSBUILDER_DIR}"
 
-    export AGENT_SOURCE_BIN="/usr/libexec/kata-containers/osbuilder/agent/kata-agent"
-    local osbuilder_version="fedora-osbuilder-version-unknown"
-    local dracut_conf_dir="./dracut/dracut.conf.d"
-    local dracut_kmodules=`source ${dracut_conf_dir}/10-drivers.conf; echo "$drivers"`
-
-    # Build the dracut overlay fs
-    ./rootfs-builder/rootfs.sh -o ${osbuilder_version} -r ${DRACUT_OVERLAY}
-    mkdir -p ${DRACUT_OVERLAY}/etc/modules-load.d
-    echo ${dracut_kmodules} | tr " " "\n" > ${DRACUT_OVERLAY}/etc/modules-load.d/kata-modules.conf
+    # Generate the rootfs using dracut
+    generate_rootfs
 
     # Build the initrd
-    dracut  \
-        --no-compress \
-        --conf /dev/null \
-        --confdir ${dracut_conf_dir} \
-        --include ${DRACUT_OVERLAY} \
-        / ${GENERATED_INITRD} ${KVERSION}
-
-    # Extract initrd filesystem for image build
-    cat ${GENERATED_INITRD} | \
-        cpio --extract --preserve-modification-time --make-directories --directory=${DRACUT_ROOTFS}
+    echo "+ Calling osbuilder initrd_builder.sh"
+    ./initrd-builder/initrd_builder.sh -o ${GENERATED_INITRD} ${DRACUT_ROOTFS}
 
     # Build the FS image
+    echo "+ Calling osbuilder image_builder.sh"
     ./image-builder/image_builder.sh -o ${GENERATED_IMAGE} ${DRACUT_ROOTFS}
 
     # This is a workaround till issue[0] is fixed, released and packaged.
     # [0]: https://github.com/kata-containers/osbuilder/issues/394
-    rm image-builder/nsdax
+    rm -f image-builder/nsdax
 
     move_images
 }
