@@ -22,6 +22,7 @@ readonly GENERATED_INITRD="${DRACUT_IMAGES}/kata-containers-initrd.img"
 
 KERNEL_PATH=""
 COMMAND=""
+OSBUILDER_DIR="/usr/libexec/kata-containers/osbuilder"
 
 
 die()
@@ -62,9 +63,14 @@ This script is called at kata-osbuilder at RPM install %post time and
 via kata-osbuilder-generate.service
 
 Options:
-  -c        Check if an initrd is already generated for the current
-              kernel, and if so, simply exit
-  -h        Show this help message
+  -h            Show this help message
+
+  -c            Check if an initrd is already generated for the current
+                kernel, and if so, simply exit
+
+  -o DIRNAME    Use the passed directory for osbuilder code. Point
+                To a git checkout if you want to use upstream osbuilder.
+                Default: ${OSBUILDER_DIR}
 
 EOT
 
@@ -74,11 +80,12 @@ EOT
 
 parse_args()
 {
-    while getopts "ch" opt
+    while getopts "cho:" opt
     do
         case $opt in
             c) COMMAND="check" ;;
-            h)	usage 0 ;;
+            h) usage 0 ;;
+            o) OSBUILDER_DIR="${OPTARG}" ;;
             *) usage 1 ;;
         esac
     done
@@ -146,7 +153,7 @@ main()
 
     find_host_kernel_path
 
-    cd /usr/libexec/kata-containers/osbuilder
+    cd "${OSBUILDER_DIR}"
 
     export AGENT_SOURCE_BIN="/usr/libexec/kata-containers/osbuilder/agent/kata-agent"
     local osbuilder_version="fedora-osbuilder-version-unknown"
