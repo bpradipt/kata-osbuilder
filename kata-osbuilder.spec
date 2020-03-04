@@ -34,6 +34,7 @@ Source1: %{git1}/archive/%{version}/agent-%{version}.tar.gz
 Source2: fedora-kata-osbuilder.sh
 Source3: kata-osbuilder-generate.service
 Source4: agent-0001-mount-Use-virtiofs-instead-of-virtio_fs-as-typeVirti.patch
+Source5: 15-dracut-fedora.conf
 
 # Adjust rootfs.sh to pull more pieces from the kata-agent dir,
 # like systemd units. Not acceptable as is for upstream, we need
@@ -42,12 +43,7 @@ Patch01: osbuilder-0001-rootfs-allow-using-systemd-units-from-AGENT_SOURCE_B.pat
 # Fix symlinks in the dracut_overlay to not clobber Fedora.
 # Needs to be submitted upstream
 Patch02: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
-# List of drivers needed in the initrd.
-# Needs to be submitted upstream
-Patch03: osbuilder-0003-dracut-Add-Fedora-virtio-kernel-modules-to-the-initr.patch
-# List of modules added to dracut.
-# Needs to be submitted upstream
-Patch04: osbuilder-0004-Add-bash-busybox-and-rescue-as-part-of-base-modules.patch
+
 
 BuildRequires: git
 BuildRequires: go-rpm-macros
@@ -61,6 +57,7 @@ Requires: cpio
 Requires: bash
 Requires: kernel
 Requires: busybox
+Requires: findutils
 # mkfs.ext4 and tune2fs needed for the image build step
 Requires: e2fsprogs
 Requires: parted
@@ -139,6 +136,7 @@ cp -aR image-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR initrd-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR scripts %{buildroot}%{kataosbuilderdir}
 cp -aR dracut %{buildroot}%{kataosbuilderdir}
+cp -a %{SOURCE5} %{buildroot}%{kataosbuilderdir}/dracut/dracut.conf.d/
 cp -a %{SOURCE2} %{buildroot}%{kataosbuilderdir}
 cp -a agent-%{version}/{kata-*.service,kata-*.target,kata-agent} %{buildroot}%{kataagentdir}
 chmod +x %{buildroot}/%{kataosbuilderdir}/rootfs-builder/alpine/rootfs_lib.sh

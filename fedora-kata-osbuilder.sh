@@ -121,6 +121,20 @@ find_host_kernel_path()
 }
 
 
+generate_modules_load_conf()
+{
+    # Write the modules-load file from all driver .ko.* files in the initrd
+    local loadfile="${DRACUT_ROOTFS}/etc/modules-load.d/kata-modules.conf"
+    mkdir -p $(dirname $loadfile)
+
+    local modpath
+    for modpath in `find ${DRACUT_ROOTFS} -path \*lib/modules/\*\.ko\*`; do
+        local name=$(echo $(basename ${modpath}) | cut -d '.' -f 1)
+        echo "${name}" >> $loadfile
+    done
+}
+
+
 generate_rootfs()
 {
     # To generate the rootfs, we build an initrd with dracut, extract
@@ -134,7 +148,6 @@ generate_rootfs()
     local agent_source_bin="/usr/libexec/kata-containers/osbuilder/agent/kata-agent"
     local osbuilder_version="fedora-osbuilder-version-unknown"
     local dracut_conf_dir="./dracut/dracut.conf.d"
-    local dracut_kmodules=`source ${dracut_conf_dir}/10-drivers.conf; echo "$drivers"`
     local tmp_initrd=`mktemp --tmpdir=${DRACUT_IMAGES}`
     unlink "$tmp_initrd"
 
@@ -162,9 +175,8 @@ generate_rootfs()
         -o ${osbuilder_version} \
         -r ${DRACUT_ROOTFS}
 
-    # Add modules-load.d file for all our manually specified drivers
-    mkdir -p ${DRACUT_ROOTFS}/etc/modules-load.d
-    echo ${dracut_kmodules} | tr " " "\n" > ${DRACUT_ROOTFS}/etc/modules-load.d/kata-modules.conf
+    # Generate modules-load.d file
+    generate_modules_load_conf
 }
 
 
