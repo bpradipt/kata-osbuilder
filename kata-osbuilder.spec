@@ -40,8 +40,8 @@ Source5: 15-dracut-fedora.conf
 # Submitted upstream: https://github.com/kata-containers/osbuilder/pull/418
 Patch01: osbuilder-0001-image_builder-Remove-nsdax-binary-after-its-usage.patch
 Patch02: osbuilder-0002-image-builder-Add-NSDAX_BIN-for-passing-in-compiled-.patch
-# Fix symlinks in the dracut_overlay to not clobber Fedora.
-# Needs to be submitted upstream
+# Don't clobber our pre-populated /sbin/init
+# https://github.com/kata-containers/osbuilder/pull/420
 Patch03: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
 
 
