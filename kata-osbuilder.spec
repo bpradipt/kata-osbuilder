@@ -146,9 +146,6 @@ cp -aR scripts %{buildroot}%{kataosbuilderdir}
 cp -aR dracut %{buildroot}%{kataosbuilderdir}
 cp -a %{SOURCE5} %{buildroot}%{kataosbuilderdir}/dracut/dracut.conf.d/
 cp -a %{SOURCE2} %{buildroot}%{kataosbuilderdir}
-chmod +x %{buildroot}/%{kataosbuilderdir}/rootfs-builder/alpine/rootfs_lib.sh
-chmod +x %{buildroot}/%{kataosbuilderdir}/rootfs-builder/suse/install-packages.sh
-chmod +x %{buildroot}/%{kataosbuilderdir}/scripts/install-yq.sh
 chmod +x %{buildroot}/%{kataosbuilderdir}/scripts/lib.sh
 
 install -m 0644 -D -t %{buildroot}%{_unitdir} %{_sourcedir}/kata-osbuilder-generate.service
@@ -182,11 +179,23 @@ fi
 %dir %{katadatadir}
 %dir %{katalibexecdir}
 %dir %{kataosbuilderdir}
+%dir %{katalocalstatecachedir}
+
 %{kataosbuilderdir}/*
 %{kataagentdir}/usr/bin/kata-agent
-%dir %{katalocalstatecachedir}
 %{_unitdir}/kata-osbuilder-generate.service
 
+# Remove some scripts we don't use
+%exclude %{kataosbuilderdir}/rootfs-builder/alpine
+%exclude %{kataosbuilderdir}/rootfs-builder/centos
+%exclude %{kataosbuilderdir}/rootfs-builder/clearlinux
+%exclude %{kataosbuilderdir}/rootfs-builder/debian
+%exclude %{kataosbuilderdir}/rootfs-builder/euleros
+%exclude %{kataosbuilderdir}/rootfs-builder/fedora
+%exclude %{kataosbuilderdir}/rootfs-builder/template
+%exclude %{kataosbuilderdir}/rootfs-builder/suse
+%exclude %{kataosbuilderdir}/rootfs-builder/ubuntu
+%exclude %{kataosbuilderdir}/scripts/install-yq.sh
 
 
 %changelog
