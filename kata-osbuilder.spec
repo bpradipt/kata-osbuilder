@@ -36,11 +36,16 @@ Source3: kata-osbuilder-generate.service
 Source4: agent-0001-mount-Use-virtiofs-instead-of-virtio_fs-as-typeVirti.patch
 Source5: 15-dracut-fedora.conf
 
+# Pass in pre-compiled nsdax to drop runtime GCC dependency
+# Submitted upstream: https://github.com/kata-containers/osbuilder/pull/418
+Patch01: osbuilder-0001-image_builder-Remove-nsdax-binary-after-its-usage.patch
+Patch02: osbuilder-0002-image-builder-Add-NSDAX_BIN-for-passing-in-compiled-.patch
 # Fix symlinks in the dracut_overlay to not clobber Fedora.
 # Needs to be submitted upstream
-Patch02: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
+Patch03: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
 
 
+BuildRequires: gcc
 BuildRequires: git
 BuildRequires: go-rpm-macros
 BuildRequires: systemd
@@ -57,8 +62,6 @@ Requires: busybox
 # image build deps
 Requires: e2fsprogs
 Requires: parted
-# gcc is used for building a little dax tool in image_builder.sh
-Requires: gcc
 
 # Bundled kata-agent pieces
 Provides: bundled(golang(github.com/docker/docker/pkg/parsers))
@@ -105,6 +108,9 @@ popd
 
 
 %build
+# Manually build nsdax tool
+gcc %{build_cflags} image-builder/nsdax.gpl.c -o nsdax
+
 # Build kata-agent
 pushd agent-%{version}
 mkdir _build
@@ -120,7 +126,6 @@ make
 popd
 
 
-
 %install
 # Install the whole kata agent rooted in /usr/libexec
 # The whole tree is copied into the appliance by our script
@@ -133,6 +138,7 @@ mkdir -p %{buildroot}%{katadatadir}
 mkdir -p %{buildroot}%{kataosbuilderdir}
 mkdir -p %{buildroot}%{katalocalstatecachedir}
 rm rootfs-builder/.gitignore
+cp -aR nsdax %{buildroot}/%{kataosbuilderdir}
 cp -aR rootfs-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR image-builder %{buildroot}/%{kataosbuilderdir}
 cp -aR initrd-builder %{buildroot}/%{kataosbuilderdir}

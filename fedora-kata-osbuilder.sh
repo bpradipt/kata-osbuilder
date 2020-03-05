@@ -161,6 +161,7 @@ generate_rootfs()
     local agent_dir="/usr/libexec/kata-containers/osbuilder/agent"
     if [ -n "${TEST_MODE}" ] ; then
         agent_dir="${OSBUILDER_DIR}/agent"
+        nsdax_bin="${OSBUILDER_DIR}/nsdax"
     fi
 
     local agent_source_bin="${agent_dir}/usr/bin/kata-agent"
@@ -249,12 +250,11 @@ main()
     ./initrd-builder/initrd_builder.sh -o ${GENERATED_INITRD} ${DRACUT_ROOTFS}
 
     # Build the FS image
+    local nsdax_bin="/usr/libexec/kata-containers/osbuilder/nsdax"
     echo "+ Calling osbuilder image_builder.sh"
-    ./image-builder/image_builder.sh -o ${GENERATED_IMAGE} ${DRACUT_ROOTFS}
-
-    # This is a workaround till issue[0] is fixed, released and packaged.
-    # [0]: https://github.com/kata-containers/osbuilder/issues/394
-    rm -f image-builder/nsdax
+    NSDAX_BIN="${nsdax_bin}" \
+        ./image-builder/image_builder.sh \
+        -o ${GENERATED_IMAGE} ${DRACUT_ROOTFS}
 
     move_images
 }
