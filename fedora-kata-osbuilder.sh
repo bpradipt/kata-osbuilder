@@ -145,7 +145,8 @@ generate_rootfs()
     # obuilder script inflexibility for now, which expect that some rootfs.sh
     # code is called on a fully populated distro root.
 
-    local agent_source_bin="/usr/libexec/kata-containers/osbuilder/agent/kata-agent"
+    local agent_dir="/usr/libexec/kata-containers/osbuilder/agent"
+    local agent_source_bin="${agent_dir}/usr/bin/kata-agent"
     local osbuilder_version="fedora-osbuilder-version-unknown"
     local dracut_conf_dir="./dracut/dracut.conf.d"
     local tmp_initrd=`mktemp --tmpdir=${DRACUT_IMAGES}`
@@ -167,6 +168,9 @@ generate_rootfs()
     # Using the busybox dracut module sets /sbin/init -> busybox
     # We don't want that. Reset it to systemd
     ln -sf ../lib/systemd/systemd ${DRACUT_ROOTFS}/usr/sbin/init
+
+    echo "+ Copying agent directory tree into place"
+    cp -ar ${agent_dir}/* ${DRACUT_ROOTFS}
 
     # Make kata specific adjustments to our rootfs
     echo "Calling osbuilder rootfs.sh on extracted rootfs"

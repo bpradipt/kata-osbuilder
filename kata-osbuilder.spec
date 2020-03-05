@@ -36,10 +36,6 @@ Source3: kata-osbuilder-generate.service
 Source4: agent-0001-mount-Use-virtiofs-instead-of-virtio_fs-as-typeVirti.patch
 Source5: 15-dracut-fedora.conf
 
-# Adjust rootfs.sh to pull more pieces from the kata-agent dir,
-# like systemd units. Not acceptable as is for upstream, we need
-# to find a nicer solution.
-Patch01: osbuilder-0001-rootfs-allow-using-systemd-units-from-AGENT_SOURCE_B.patch
 # Fix symlinks in the dracut_overlay to not clobber Fedora.
 # Needs to be submitted upstream
 Patch02: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
@@ -126,9 +122,15 @@ popd
 
 
 %install
+# Install the whole kata agent rooted in /usr/libexec
+# The whole tree is copied into the appliance by our script
+mkdir -p %{buildroot}%{kataagentdir}
+pushd agent-%{version}
+%makeinstall DESTDIR=%{buildroot}%{kataagentdir}
+popd
+
 mkdir -p %{buildroot}%{katadatadir}
 mkdir -p %{buildroot}%{kataosbuilderdir}
-mkdir -p %{buildroot}%{kataagentdir}
 mkdir -p %{buildroot}%{katalocalstatecachedir}
 rm rootfs-builder/.gitignore
 cp -aR rootfs-builder %{buildroot}/%{kataosbuilderdir}
@@ -138,7 +140,6 @@ cp -aR scripts %{buildroot}%{kataosbuilderdir}
 cp -aR dracut %{buildroot}%{kataosbuilderdir}
 cp -a %{SOURCE5} %{buildroot}%{kataosbuilderdir}/dracut/dracut.conf.d/
 cp -a %{SOURCE2} %{buildroot}%{kataosbuilderdir}
-cp -a agent-%{version}/{kata-*.service,kata-*.target,kata-agent} %{buildroot}%{kataagentdir}
 chmod +x %{buildroot}/%{kataosbuilderdir}/rootfs-builder/alpine/rootfs_lib.sh
 chmod +x %{buildroot}/%{kataosbuilderdir}/rootfs-builder/suse/install-packages.sh
 chmod +x %{buildroot}/%{kataosbuilderdir}/scripts/install-yq.sh
@@ -171,6 +172,7 @@ fi
 %dir %{katalibexecdir}
 %dir %{kataosbuilderdir}
 %{kataosbuilderdir}/*
+%{kataagentdir}/usr/bin/kata-agent
 %dir %{katalocalstatecachedir}
 %{_unitdir}/kata-osbuilder-generate.service
 
