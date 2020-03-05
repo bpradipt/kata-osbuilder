@@ -48,18 +48,13 @@ BuildRequires: systemd
 # %check requirements
 BuildRequires: kernel
 BuildRequires: dracut
-BuildRequires: findutils
 BuildRequires: busybox
 
-# image build deps
-Requires: qemu-img
-Requires: dracut
-Requires: cpio
-Requires: bash
+# dracut/rootfs build deps
 Requires: kernel
+Requires: dracut
 Requires: busybox
-Requires: findutils
-# mkfs.ext4 and tune2fs needed for the image build step
+# image build deps
 Requires: e2fsprogs
 Requires: parted
 # gcc is used for building a little dax tool in image_builder.sh
