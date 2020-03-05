@@ -45,6 +45,11 @@ BuildRequires: git
 BuildRequires: go-rpm-macros
 BuildRequires: systemd
 %{?systemd_requires}
+# %check requirements
+BuildRequires: kernel
+BuildRequires: dracut
+BuildRequires: findutils
+BuildRequires: busybox
 
 # image build deps
 Requires: qemu-img
@@ -146,6 +151,11 @@ chmod +x %{buildroot}/%{kataosbuilderdir}/scripts/install-yq.sh
 chmod +x %{buildroot}/%{kataosbuilderdir}/scripts/lib.sh
 
 install -m 0644 -D -t %{buildroot}%{_unitdir} %{_sourcedir}/kata-osbuilder-generate.service
+
+
+%check
+TEST_MODE=1 %{buildroot}%{kataosbuilderdir}/fedora-kata-osbuilder.sh \
+    -o %{buildroot}%{kataosbuilderdir}
 
 
 %preun

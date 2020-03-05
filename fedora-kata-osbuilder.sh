@@ -8,7 +8,6 @@ set -o pipefail
 
 readonly IMAGE_TOPDIR="/var/cache/kata-containers"
 readonly KERNEL_SYMLINK="${IMAGE_TOPDIR}/vmlinuz.container"
-readonly KVERSION=`uname -r`
 readonly SCRIPTNAME="$0"
 
 readonly DRACUT_ROOTFS=`mktemp --directory -t kata-dracut-rootfs-XXXXXX`
@@ -19,9 +18,14 @@ readonly GENERATED_IMAGE="${DRACUT_IMAGES}/kata-containers.img"
 readonly GENERATED_INITRD="${DRACUT_IMAGES}/kata-containers-initrd.img"
 
 
+KVERSION=`uname -r`
 KERNEL_PATH=""
 COMMAND=""
 OSBUILDER_DIR="/usr/libexec/kata-containers/osbuilder"
+
+# rpm %check sets this to run the script without overwriting host
+# content, and not requiring root
+TEST_MODE="${TEST_MODE:-}"
 
 
 die()
@@ -99,6 +103,15 @@ parse_args()
 
 find_host_kernel_path()
 {
+    if [ -n "${TEST_MODE}" -a ! -e "/lib/modules/$KVERSION" ]; then
+        # Running in TEST_MODE means we could be run in a mock chroot,
+        # where uname will report different kernel than what we have
+        # installed in the chroot. So we need to determine a valid
+        # kernel version to test against.
+        KVERSION=$(ls /lib/modules/ | tr "\n" " " | cut -d " " -f 1)
+        echo "+ TEST_MODE found KVERSION=${KVERSION}"
+    fi
+
     local vmname
     for vmname in vmlinuz vmlinux; do
         local trypath="/lib/modules/$KVERSION/$vmname"
@@ -146,6 +159,10 @@ generate_rootfs()
     # code is called on a fully populated distro root.
 
     local agent_dir="/usr/libexec/kata-containers/osbuilder/agent"
+    if [ -n "${TEST_MODE}" ] ; then
+        agent_dir="${OSBUILDER_DIR}/agent"
+    fi
+
     local agent_source_bin="${agent_dir}/usr/bin/kata-agent"
     local osbuilder_version="fedora-osbuilder-version-unknown"
     local dracut_conf_dir="./dracut/dracut.conf.d"
@@ -211,7 +228,9 @@ main()
 {
     parse_args $*
 
-    [ "$(id -u)" -eq 0 ] || die "$0: must be run as root"
+    if [ -z "${TEST_MODE}" ]; then
+        [ "$(id -u)" -eq 0 ] || die "$0: must be run as root"
+    fi
 
     find_host_kernel_path
 
@@ -219,6 +238,11 @@ main()
 
     # Generate the rootfs using dracut
     generate_rootfs
+
+    if [ -n "${TEST_MODE}" ]; then
+        echo "+ Exiting TEST_MODE successfully"
+        return
+    fi
 
     # Build the initrd
     echo "+ Calling osbuilder initrd_builder.sh"
