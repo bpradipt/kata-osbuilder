@@ -20,7 +20,7 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -199,6 +199,14 @@ fi
 
 
 %changelog
+* Thu Mar 05 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-6
+- Precompile nsdax binary to drop gcc runtime dep
+- Re-add 9p drivers for ease of debugging
+- Add %check section
+- Add drop in 15-dracut-fedora.conf rather than patch upstream files
+- Drop some custom patches
+- fedora-kata-osbuilder.sh rework and improvements
+
 * Mon Feb 17 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-5
 - Add runtime busybox dep, for dracut debug modules
 
