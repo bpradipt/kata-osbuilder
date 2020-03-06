@@ -71,6 +71,9 @@ Options:
   -c            Check if an initrd is already generated for the current
                 kernel, and if so, simply exit
 
+  -k            Manually specify kernel version to use. Default comes
+                from uname. Default: ${KVERSION}
+
   -o DIRNAME    Use the passed directory for osbuilder code. Point
                 To a git checkout if you want to use upstream osbuilder.
                 Default: ${OSBUILDER_DIR}
@@ -83,12 +86,13 @@ EOT
 
 parse_args()
 {
-    while getopts "cho:" opt
+    while getopts "chk:o:" opt
     do
         case $opt in
             c) COMMAND="check" ;;
             h) usage 0 ;;
             o) OSBUILDER_DIR="${OPTARG}" ;;
+            k) KVERSION="${OPTARG}" ;;
             *) usage 1 ;;
         esac
     done
@@ -103,25 +107,19 @@ parse_args()
 
 find_host_kernel_path()
 {
-    if [ -n "${TEST_MODE}" -a ! -e "/lib/modules/$KVERSION" ]; then
-        # Running in TEST_MODE means we could be run in a mock chroot,
-        # where uname will report different kernel than what we have
-        # installed in the chroot. So we need to determine a valid
-        # kernel version to test against.
-        KVERSION=$(ls /lib/modules/ | tr "\n" " " | cut -d " " -f 1)
-        echo "+ TEST_MODE found KVERSION=${KVERSION}"
-    fi
+    local modpath="/lib/modules/$KVERSION/"
+    [ ! -e "$modpath" ] && die "version=$KVERSION path=$modpath does not exist"
 
     local vmname
     for vmname in vmlinuz vmlinux; do
-        local trypath="/lib/modules/$KVERSION/$vmname"
+        local trypath="$modpath/$vmname"
         if [ -e "$trypath" ] ; then
             KERNEL_PATH="$trypath"
             break
         fi
     done
 
-    [ -z "$KERNEL_PATH" ] && die "Didn't find kernel path for version=$KVERSION"
+    [ -z "$KERNEL_PATH" ] && die "Didn't find vmlinu* path in $modpath"
 
     if [ "$COMMAND" = "check" ]; then
         local linked_kernel=$(readlink -n "${KERNEL_SYMLINK}" || :)
