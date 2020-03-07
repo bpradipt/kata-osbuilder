@@ -20,11 +20,12 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
 
+# kata-agent doesn't build on arm32
 ExcludeArch: %{arm}
 # Installing requires a kernel package, which isn't available i686
 ExcludeArch: %{ix86}
@@ -204,6 +205,9 @@ fi
 
 
 %changelog
+* Fri Mar 06 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-7
+- Allow passing non-uname kernel version to osbuilder script
+
 * Thu Mar 05 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-6
 - Precompile nsdax binary to drop gcc runtime dep
 - Re-add 9p drivers for ease of debugging
