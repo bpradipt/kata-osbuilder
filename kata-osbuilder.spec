@@ -7,6 +7,11 @@
 %global debug_package %{nil}
 %endif
 
+%if ! 0%{?gobuild:1}
+# %gobuild not available on RHEL. Definition lifted from Fedora33 podman.spec and tested on RHEL-8.2
+%define gobuild(o:) GO111MODULE=off go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \\n') -extldflags '-Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld '" -a -v -x %{?**};
+%endif
+
 %global katadatadir             %{_datadir}/kata-containers
 %global katalibexecdir          %{_libexecdir}/kata-containers
 %global kataosbuilderdir        %{katalibexecdir}/osbuilder
@@ -48,7 +53,12 @@ Patch03: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
 
 BuildRequires: gcc
 BuildRequires: git
+%if 0%{?fedora}
 BuildRequires: go-rpm-macros
+%else
+BuildRequires: compiler(go-compiler)
+BuildRequires: golang
+%endif
 BuildRequires: make
 BuildRequires: systemd
 %{?systemd_requires}
