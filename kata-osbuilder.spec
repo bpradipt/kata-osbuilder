@@ -63,6 +63,7 @@ Requires: busybox
 # image build deps
 Requires: e2fsprogs
 Requires: parted
+Requires: qemu-img
 
 # Bundled kata-agent pieces
 Provides: bundled(golang(github.com/docker/docker/pkg/parsers))
