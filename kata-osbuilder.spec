@@ -20,7 +20,7 @@
 
 Name: kata-osbuilder
 Version: %{tag}
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -207,6 +207,9 @@ fi
 
 
 %changelog
+* Tue Mar 10 2020 Cole Robinson <crobinso@redhat.com> - 1.10.0-8
+- Restore needed qemu-img dep
+
 * Fri Mar 06 2020 Cole Robinson <aintdiscole@gmail.com> - 1.10.0-7
 - Allow passing non-uname kernel version to osbuilder script
 
