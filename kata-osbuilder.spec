@@ -49,6 +49,7 @@ Patch03: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
 BuildRequires: gcc
 BuildRequires: git
 BuildRequires: go-rpm-macros
+BuildRequires: make
 BuildRequires: systemd
 %{?systemd_requires}
 # %check requirements
