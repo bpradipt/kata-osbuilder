@@ -1,6 +1,6 @@
 %global with_debug 0
 
-%if 0%{with_debug}
+%if 0%{?with_debug}
 %global _find_debuginfo_dwz_opts %{nil}
 %global _dwz_low_mem_die_limit 0
 %else
