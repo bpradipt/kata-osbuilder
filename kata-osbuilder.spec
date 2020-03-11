@@ -40,7 +40,11 @@ Source1: %{git1}/archive/%{version}/agent-%{version}.tar.gz
 Source2: fedora-kata-osbuilder.sh
 Source3: kata-osbuilder-generate.service
 Source4: agent-0001-mount-Use-virtiofs-instead-of-virtio_fs-as-typeVirti.patch
+%if 0%{?fedora}
 Source5: 15-dracut-fedora.conf
+%else
+Source5: 15-dracut-rhel.conf
+%endif
 
 # Pass in pre-compiled nsdax to drop runtime GCC dependency
 # Submitted upstream: https://github.com/kata-containers/osbuilder/pull/418
@@ -65,12 +69,16 @@ BuildRequires: systemd
 # %check requirements
 BuildRequires: kernel
 BuildRequires: dracut
+%if 0%{?fedora}
 BuildRequires: busybox
+%endif
 
 # dracut/rootfs build deps
 Requires: kernel
 Requires: dracut
+%if 0%{?fedora}
 Requires: busybox
+%endif
 # image build deps
 Requires: e2fsprogs
 Requires: parted
