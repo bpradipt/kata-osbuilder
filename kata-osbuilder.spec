@@ -59,6 +59,9 @@ Patch02: osbuilder-0002-image-builder-Add-NSDAX_BIN-for-passing-in-compiled-.pat
 # Don't clobber our pre-populated /sbin/init
 # https://github.com/kata-containers/osbuilder/pull/420
 Patch03: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
+# Force mount_dir to be created in $TMPDIR
+# https://github.com/kata-containers/osbuilder/pull/436
+Patch04: osbuilder-0004-image_builder-Force-mount_dir-to-be-created-in-TMPDI.patch
 
 
 BuildRequires: gcc
