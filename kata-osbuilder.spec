@@ -193,17 +193,19 @@ TEST_MODE=1 %{buildroot}%{kataosbuilderdir}/fedora-kata-osbuilder.sh \
 %postun
 %systemd_postun kata-osbuilder-generate.service
 %post
-%systemd_post kata-osbuilder-generate.service
+# Skip running this on Fedora CoreOS / Red Hat CoreOS
+if test -w %{katalocalstatecachedir}; then
+    %systemd_post kata-osbuilder-generate.service
 
-TMPOUT="$(mktemp -t kata-rpm-post-XXXXXX.log)"
-echo "Creating kata appliance initrd and filesystem image..."
-bash %{kataosbuilderdir}/fedora-kata-osbuilder.sh > ${TMPOUT} 2>&1
-if test "$?" != "0" ; then
-    echo "Building failed. Here is the log details:"
-    cat ${TMPOUT}
-    exit 1
+    TMPOUT="$(mktemp -t kata-rpm-post-XXXXXX.log)"
+    echo "Creating kata appliance initrd and filesystem image..."
+    bash %{kataosbuilderdir}/fedora-kata-osbuilder.sh > ${TMPOUT} 2>&1
+    if test "$?" != "0" ; then
+        echo "Building failed. Here is the log details:"
+        cat ${TMPOUT}
+        exit 1
+    fi
 fi
-
 
 
 %files
