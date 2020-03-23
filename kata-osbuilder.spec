@@ -18,20 +18,28 @@
 %define gobuild(o:) GO111MODULE=off go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \\n') -extldflags '-Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld '" -a -v -x %{?**};
 %endif
 
+# Release candidate version tracking
+%global rcver alpha1
+%if 0%{?rcver:1}
+%global rcrel .%{rcver}
+%global rcstr -%{rcver}
+%endif
+
+Version: 1.11.0
+
 %global katadatadir             %{_datadir}/kata-containers
 %global katalibexecdir          %{_libexecdir}/kata-containers
 %global kataosbuilderdir        %{katalibexecdir}/osbuilder
 %global kataagentdir            %{kataosbuilderdir}/agent
 %global katalocalstatecachedir  %{_localstatedir}/cache/kata-containers
 
-%global tag                     1.10.0
+%global tag                     %{version}%{?rcstr}
 %global git0    https://github.com/kata-containers/osbuilder
 %global git1 https://github.com/kata-containers/agent
 
 
 Name: kata-osbuilder
-Version: %{tag}
-Release: 8%{?dist}
+Release: 0%{?rcrel}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -41,8 +49,8 @@ ExcludeArch: %{arm}
 # Installing requires a kernel package, which isn't available i686
 ExcludeArch: %{ix86}
 
-Source0: %{git0}/archive/%{version}/osbuilder-%{version}.tar.gz
-Source1: %{git1}/archive/%{version}/agent-%{version}.tar.gz
+Source0: %{git0}/archive/%{version}/osbuilder-%{version}%{?rcstr}.tar.gz
+Source1: %{git1}/archive/%{version}/agent-%{version}%{?rcstr}.tar.gz
 Source2: fedora-kata-osbuilder.sh
 Source3: kata-osbuilder-generate.service
 Source4: agent-0001-mount-Use-virtiofs-instead-of-virtio_fs-as-typeVirti.patch
@@ -52,16 +60,9 @@ Source5: 15-dracut-fedora.conf
 Source5: 15-dracut-rhel.conf
 %endif
 
-# Pass in pre-compiled nsdax to drop runtime GCC dependency
-# Submitted upstream: https://github.com/kata-containers/osbuilder/pull/418
-Patch01: osbuilder-0001-image_builder-Remove-nsdax-binary-after-its-usage.patch
-Patch02: osbuilder-0002-image-builder-Add-NSDAX_BIN-for-passing-in-compiled-.patch
-# Don't clobber our pre-populated /sbin/init
-# https://github.com/kata-containers/osbuilder/pull/420
-Patch03: osbuilder-0003-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
 # Force mount_dir to be created in $TMPDIR
 # https://github.com/kata-containers/osbuilder/pull/436
-Patch04: osbuilder-0004-image_builder-Force-mount_dir-to-be-created-in-TMPDI.patch
+Patch01: osbuilder-0001-image_builder-Force-mount_dir-to-be-created-in-TMPDI.patch
 
 
 BuildRequires: gcc
@@ -130,9 +131,9 @@ Provides: bundled(golang(google.golang.org/grpc/status))
 
 
 %prep
-%autosetup -Sgit -n osbuilder-%{version}
+%autosetup -Sgit -n osbuilder-%{version}%{?rcstr}
 tar -xvf %{SOURCE1} > /dev/null
-pushd agent-%{version}
+pushd agent-%{version}%{?rcstr}
 patch -p1 < %{SOURCE4}
 popd
 
@@ -142,7 +143,7 @@ popd
 gcc %{build_cflags} image-builder/nsdax.gpl.c -o nsdax
 
 # Build kata-agent
-pushd agent-%{version}
+pushd agent-%{version}%{?rcstr}
 mkdir _build
 pushd _build
 mkdir -p src/github.com/kata-containers
@@ -160,7 +161,7 @@ popd
 # Install the whole kata agent rooted in /usr/libexec
 # The whole tree is copied into the appliance by our script
 mkdir -p %{buildroot}%{kataagentdir}
-pushd agent-%{version}
+pushd agent-%{version}%{?rcstr}
 %makeinstall DESTDIR=%{buildroot}%{kataagentdir}
 popd
 
@@ -237,6 +238,9 @@ fi
 
 
 %changelog
+* Mon Mar 23 2020 Fabiano Fidêncio <fidencio@redhat.com> - 1.11.0-0.alpha1
+- Update to release 1.11.0-alpha1
+
 * Tue Mar 10 2020 Cole Robinson <crobinso@redhat.com> - 1.10.0-8
 - Restore needed qemu-img dep
 
