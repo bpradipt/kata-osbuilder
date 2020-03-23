@@ -1,3 +1,9 @@
+%if (0%{?fedora} && 0%{?fedora >= 31})
+    %define have_go_rpm_macros 1
+%else
+    %define have_go_rpm_macros 0
+%endif
+
 %global with_debug 0
 
 %if 0%{?with_debug}
@@ -57,7 +63,7 @@ Patch03: osbuilder-0002-rootfs-Don-t-overwrite-init-if-it-already-exists.patch
 
 BuildRequires: gcc
 BuildRequires: git
-%if 0%{?fedora}
+%if 0%{?have_go_rpm_macros}
 BuildRequires: go-rpm-macros
 %else
 BuildRequires: compiler(go-compiler)
