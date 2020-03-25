@@ -1,23 +1,3 @@
-%if (0%{?fedora} && 0%{?fedora >= 31})
-    %define have_go_rpm_macros 1
-%else
-    %define have_go_rpm_macros 0
-%endif
-
-%global with_debug 0
-
-%if 0%{?with_debug}
-%global _find_debuginfo_dwz_opts %{nil}
-%global _dwz_low_mem_die_limit 0
-%else
-%global debug_package %{nil}
-%endif
-
-%if ! 0%{?gobuild:1}
-# %gobuild not available on RHEL. Definition lifted from Fedora33 podman.spec and tested on RHEL-8.2
-%define gobuild(o:) GO111MODULE=off go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \\n') -extldflags '-Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld '" -a -v -x %{?**};
-%endif
-
 # Release candidate version tracking
 %global rcver alpha1
 %if 0%{?rcver:1}
@@ -27,33 +7,27 @@
 
 Version: 1.11.0
 
-%global katadatadir             %{_datadir}/kata-containers
 %global katalibexecdir          %{_libexecdir}/kata-containers
 %global kataosbuilderdir        %{katalibexecdir}/osbuilder
-%global kataagentdir            %{kataosbuilderdir}/agent
 %global katalocalstatecachedir  %{_localstatedir}/cache/kata-containers
 
 %global tag                     %{version}%{?rcstr}
 %global git0    https://github.com/kata-containers/osbuilder
-%global git1 https://github.com/kata-containers/agent
 
 
 Name: kata-osbuilder
-Release: 0%{?rcrel}%{?dist}
+Release: 0.1%{?rcrel}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
 
-# kata-agent doesn't build on arm32
+# Mirror of kata-agent ExcludeArch
 ExcludeArch: %{arm}
-# Installing requires a kernel package, which isn't available i686
 ExcludeArch: %{ix86}
 
 Source0: %{git0}/archive/%{version}/osbuilder-%{version}%{?rcstr}.tar.gz
-Source1: %{git1}/archive/%{version}/agent-%{version}%{?rcstr}.tar.gz
 Source2: fedora-kata-osbuilder.sh
 Source3: kata-osbuilder-generate.service
-Source4: agent-0001-mount-Use-virtiofs-instead-of-virtio_fs-as-typeVirti.patch
 %if 0%{?fedora}
 Source5: 15-dracut-fedora.conf
 %else
@@ -62,27 +36,23 @@ Source5: 15-dracut-rhel.conf
 
 # Force mount_dir to be created in $TMPDIR
 # https://github.com/kata-containers/osbuilder/pull/436
-Patch01: osbuilder-0001-image_builder-Force-mount_dir-to-be-created-in-TMPDI.patch
+Patch01: 0001-image_builder-Force-mount_dir-to-be-created-in-TMPDI.patch
 
 
 BuildRequires: gcc
 BuildRequires: git
-%if 0%{?have_go_rpm_macros}
-BuildRequires: go-rpm-macros
-%else
-BuildRequires: compiler(go-compiler)
-BuildRequires: golang
-%endif
 BuildRequires: make
 BuildRequires: systemd
 %{?systemd_requires}
 # %check requirements
 BuildRequires: kernel
 BuildRequires: dracut
+BuildRequires: kata-agent >= %{version}
 %if 0%{?fedora}
 BuildRequires: busybox
 %endif
 
+Requires: kata-agent >= %{version}
 # dracut/rootfs build deps
 Requires: kernel
 Requires: dracut
@@ -94,36 +64,6 @@ Requires: e2fsprogs
 Requires: parted
 Requires: qemu-img
 
-# Bundled kata-agent pieces
-Provides: bundled(golang(github.com/docker/docker/pkg/parsers))
-Provides: bundled(golang(github.com/gogo/protobuf/gogoproto))
-Provides: bundled(golang(github.com/gogo/protobuf/jsonpb))
-Provides: bundled(golang(github.com/gogo/protobuf/proto))
-Provides: bundled(golang(github.com/gogo/protobuf/types))
-Provides: bundled(golang(github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc))
-Provides: bundled(golang(github.com/hashicorp/yamux))
-Provides: bundled(golang(github.com/mdlayher/vsock))
-Provides: bundled(golang(github.com/opencontainers/runc/libcontainer))
-Provides: bundled(golang(github.com/opencontainers/runc/libcontainer/cgroups))
-Provides: bundled(golang(github.com/opencontainers/runc/libcontainer/configs))
-Provides: bundled(golang(github.com/opencontainers/runc/libcontainer/nsenter))
-Provides: bundled(golang(github.com/opencontainers/runc/libcontainer/seccomp))
-Provides: bundled(golang(github.com/opencontainers/runc/libcontainer/specconv))
-Provides: bundled(golang(github.com/opencontainers/runc/libcontainer/utils))
-Provides: bundled(golang(github.com/opencontainers/runtime-spec/specs-go))
-Provides: bundled(golang(github.com/opentracing/opentracing-go))
-Provides: bundled(golang(github.com/pkg/errors))
-Provides: bundled(golang(github.com/sirupsen/logrus))
-Provides: bundled(golang(github.com/stretchr/testify/assert))
-Provides: bundled(golang(github.com/uber/jaeger-client-go/config))
-Provides: bundled(golang(github.com/vishvananda/netlink))
-Provides: bundled(golang(github.com/vishvananda/netns))
-Provides: bundled(golang(golang.org/x/net/context))
-Provides: bundled(golang(golang.org/x/sys/unix))
-Provides: bundled(golang(google.golang.org/grpc))
-Provides: bundled(golang(google.golang.org/grpc/codes))
-Provides: bundled(golang(google.golang.org/grpc/status))
-
 
 %description
 %{summary}
@@ -132,40 +72,14 @@ Provides: bundled(golang(google.golang.org/grpc/status))
 
 %prep
 %autosetup -Sgit -n osbuilder-%{version}%{?rcstr}
-tar -xvf %{SOURCE1} > /dev/null
-pushd agent-%{version}%{?rcstr}
-patch -p1 < %{SOURCE4}
-popd
 
 
 %build
 # Manually build nsdax tool
 gcc %{build_cflags} image-builder/nsdax.gpl.c -o nsdax
 
-# Build kata-agent
-pushd agent-%{version}%{?rcstr}
-mkdir _build
-pushd _build
-mkdir -p src/github.com/kata-containers
-ln -s $(dirs +1 -l) src/github.com/kata-containers/agent
-popd
-
-mv vendor src
-export GOPATH=$(pwd)/_build:$(pwd)
-%gobuild -o %{name}
-make
-popd
-
 
 %install
-# Install the whole kata agent rooted in /usr/libexec
-# The whole tree is copied into the appliance by our script
-mkdir -p %{buildroot}%{kataagentdir}
-pushd agent-%{version}%{?rcstr}
-%makeinstall DESTDIR=%{buildroot}%{kataagentdir}
-popd
-
-mkdir -p %{buildroot}%{katadatadir}
 mkdir -p %{buildroot}%{kataosbuilderdir}
 mkdir -p %{buildroot}%{katalocalstatecachedir}
 rm rootfs-builder/.gitignore
@@ -215,13 +129,11 @@ fi
 %files
 %license LICENSE
 %doc CODE_OF_CONDUCT.md CONTRIBUTING.md README.md
-%dir %{katadatadir}
 %dir %{katalibexecdir}
 %dir %{kataosbuilderdir}
 %dir %{katalocalstatecachedir}
 
 %{kataosbuilderdir}/*
-%{kataagentdir}/usr/bin/kata-agent
 %{_unitdir}/kata-osbuilder-generate.service
 
 # Remove some scripts we don't use
@@ -238,6 +150,9 @@ fi
 
 
 %changelog
+* Wed Mar 25 2020 Cole Robinson <aintdiscole@gmail.com> - 1.11.0-0.1.alpha
+- Remove kata-agent, it has moved to its own top level package
+
 * Mon Mar 23 2020 Fabiano Fidêncio <fidencio@redhat.com> - 1.11.0-0.alpha1
 - Update to release 1.11.0-alpha1
 

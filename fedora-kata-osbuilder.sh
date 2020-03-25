@@ -156,9 +156,8 @@ generate_rootfs()
     # obuilder script inflexibility for now, which expect that some rootfs.sh
     # code is called on a fully populated distro root.
 
-    local agent_dir="/usr/libexec/kata-containers/osbuilder/agent"
+    local agent_dir="/usr/libexec/kata-containers/agent"
     if [ -n "${TEST_MODE}" ] ; then
-        agent_dir="${OSBUILDER_DIR}/agent"
         nsdax_bin="${OSBUILDER_DIR}/nsdax"
     fi
 
