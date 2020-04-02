@@ -16,7 +16,7 @@ Version: 1.11.0
 
 
 Name: kata-osbuilder
-Release: 0.1%{?rcrel}%{?dist}
+Release: 0.2%{?rcrel}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -59,10 +59,6 @@ Requires: dracut
 %if 0%{?fedora}
 Requires: busybox
 %endif
-# image build deps
-Requires: e2fsprogs
-Requires: parted
-Requires: qemu-img
 
 
 %description
@@ -116,7 +112,7 @@ if test -w %{katalocalstatecachedir}; then
     %systemd_post kata-osbuilder-generate.service
 
     TMPOUT="$(mktemp -t kata-rpm-post-XXXXXX.log)"
-    echo "Creating kata appliance initrd and filesystem image..."
+    echo "Creating kata appliance initrd..."
     bash %{kataosbuilderdir}/fedora-kata-osbuilder.sh > ${TMPOUT} 2>&1
     if test "$?" != "0" ; then
         echo "Building failed. Here is the log details:"
@@ -150,6 +146,9 @@ fi
 
 
 %changelog
+* Thu Apr 02 2020 Cole Robinson <aintdiscole@gmail.com> - 1.11.0-0.2.alpha
+- Disable FS image generation, the image is presently unused
+
 * Wed Mar 25 2020 Cole Robinson <aintdiscole@gmail.com> - 1.11.0-0.1.alpha
 - Remove kata-agent, it has moved to its own top level package
 
