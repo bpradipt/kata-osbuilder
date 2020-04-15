@@ -25,7 +25,7 @@ URL: %{git0}
 ExcludeArch: %{arm}
 ExcludeArch: %{ix86}
 
-Source0: %{git0}/archive/%{version}/osbuilder-%{version}%{?rcstr}.tar.gz
+Source0: %{git0}/archive/%{version}%{?rcstr}/osbuilder-%{version}%{?rcstr}.tar.gz
 Source2: fedora-kata-osbuilder.sh
 Source3: kata-osbuilder-generate.service
 %if 0%{?fedora}
