@@ -1,5 +1,5 @@
 # Release candidate version tracking
-%global rcver alpha1
+%global rcver rc0
 %if 0%{?rcver:1}
 %global rcrel .%{rcver}
 %global rcstr -%{rcver}
@@ -16,7 +16,7 @@ Version: 1.11.0
 
 
 Name: kata-osbuilder
-Release: 0.2%{?rcrel}%{?dist}
+Release: 0.3%{?rcrel}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -33,10 +33,6 @@ Source5: 15-dracut-fedora.conf
 %else
 Source5: 15-dracut-rhel.conf
 %endif
-
-# Force mount_dir to be created in $TMPDIR
-# https://github.com/kata-containers/osbuilder/pull/436
-Patch01: 0001-image_builder-Force-mount_dir-to-be-created-in-TMPDI.patch
 
 
 BuildRequires: gcc
@@ -149,6 +145,9 @@ fi
 
 
 %changelog
+* Mon Apr 20 2020 Cole Robinson <aintdiscole@gmail.com> - 1.11.0-0.3-rc0
+- Update to kata-osbuilder 1.11.0-rc0
+
 * Thu Apr 02 2020 Cole Robinson <aintdiscole@gmail.com> - 1.11.0-0.2.alpha
 - Disable FS image generation, the image is presently unused
 
