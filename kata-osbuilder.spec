@@ -96,7 +96,10 @@ install -m 0644 -D -t %{buildroot}%{_unitdir} %{_sourcedir}/kata-osbuilder-gener
 # We could be run in a mock chroot, where uname will report
 # different kernel than what we have installed in the chroot.
 # So we need to determine a valid kernel version to test against.
-KVERSION=$(ls /lib/modules/ | tr "\n" " " | cut -d " " -f 1)
+for kernelpath in /lib/modules/*/vmlinu*; do
+    KVERSION="$(echo $kernelpath | cut -d "/" -f 4)"
+    break
+done
 TEST_MODE=1 %{buildroot}%{kataosbuilderdir}/fedora-kata-osbuilder.sh \
     -o %{buildroot}%{kataosbuilderdir} \
     -k "$KVERSION"
