@@ -221,11 +221,11 @@ move_images()
 
     ln -sf ${KERNEL_PATH} ${KERNEL_SYMLINK}
 
-    mv ${GENERATED_INITRD} ${initrd_dest_path}
+    mv -Z ${GENERATED_INITRD} ${initrd_dest_path}
     ln -sf ${initrd_dest_path} ${IMAGE_TOPDIR}/kata-containers-initrd.img
 
     if [ -n "${GENERATE_IMAGE}" ]; then
-        mv ${GENERATED_IMAGE} ${image_dest_path}
+        mv -Z ${GENERATED_IMAGE} ${image_dest_path}
         ln -sf ${image_dest_path} ${image_dest_link}
     else
         rm -f ${image_dest_link}
