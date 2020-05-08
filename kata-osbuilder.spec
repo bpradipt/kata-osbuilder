@@ -1,5 +1,5 @@
 # Release candidate version tracking
-%global rcver rc0
+# global rcver rc0
 %if 0%{?rcver:1}
 %global rcrel .%{rcver}
 %global rcstr -%{rcver}
@@ -16,7 +16,7 @@ Version: 1.11.0
 
 
 Name: kata-osbuilder
-Release: 0.3%{?rcrel}%{?dist}
+Release: 1%{?rcrel}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -145,6 +145,9 @@ fi
 
 
 %changelog
+* Fri May 08 2020 Cole Robinson <crobinso@redhat.com> - 1.11.0-1
+- Update to version 1.11.0
+
 * Mon Apr 20 2020 Cole Robinson <aintdiscole@gmail.com> - 1.11.0-0.3-rc0
 - Update to kata-osbuilder 1.11.0-rc0
 
