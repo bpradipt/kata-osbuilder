@@ -16,7 +16,7 @@ Version: 1.11.0
 
 
 Name: kata-osbuilder
-Release: 1%{?rcrel}%{?dist}
+Release: 2%{?rcrel}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -145,6 +145,9 @@ fi
 
 
 %changelog
+* Tue Jun 02 2020 Fabiano Fidêncio <fidencio@redhat.com> - 1.11.0-2
+- Add VFIO modules to the initrd
+
 * Fri May 08 2020 Cole Robinson <crobinso@redhat.com> - 1.11.0-1
 - Update to version 1.11.0
 
