@@ -17,6 +17,8 @@ trap exit_handler EXIT
 readonly GENERATED_IMAGE="${DRACUT_IMAGES}/kata-containers.img"
 readonly GENERATED_INITRD="${DRACUT_IMAGES}/kata-containers-initrd.img"
 
+readonly DISTRO=`grep '^ID' /etc/os-release | awk '{print $2}' FS='='`
+
 
 KVERSION=`uname -r`
 KERNEL_PATH=""
@@ -168,7 +170,7 @@ generate_rootfs()
     fi
 
     local agent_source_bin="${agent_dir}/usr/bin/kata-agent"
-    local osbuilder_version="fedora-osbuilder-version-unknown"
+    local osbuilder_version="${DISTRO}-osbuilder-version-unknown"
     local dracut_conf_dir="./dracut/dracut.conf.d"
     local tmp_initrd=`mktemp --tmpdir=${DRACUT_IMAGES}`
     unlink "$tmp_initrd"
@@ -210,8 +212,8 @@ move_images()
     # Move images into place
     local image_osbuilder_dir="${IMAGE_TOPDIR}/osbuilder-images"
     local image_dir="${image_osbuilder_dir}/$KVERSION"
-    local initrd_dest_path="${image_dir}/fedora-kata-${KVERSION}.initrd"
-    local image_dest_path="${image_dir}/fedora-kata-${KVERSION}.img"
+    local initrd_dest_path="${image_dir}/${DISTRO}-kata-${KVERSION}.initrd"
+    local image_dest_path="${image_dir}/${DISTRO}-kata-${KVERSION}.img"
     local image_dest_link="${IMAGE_TOPDIR}/kata-containers.img"
 
     # This blows away the entire osbuilder-images/ dir, deleting any
