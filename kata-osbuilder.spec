@@ -5,7 +5,7 @@
 %global rcstr -%{rcver}
 %endif
 
-Version: 1.11.0
+Version: 1.11.1
 
 %global katalibexecdir          %{_libexecdir}/kata-containers
 %global kataosbuilderdir        %{katalibexecdir}/osbuilder
@@ -16,7 +16,7 @@ Version: 1.11.0
 
 
 Name: kata-osbuilder
-Release: 2%{?rcrel}%{?dist}
+Release: 1%{?rcrel}%{?dist}
 License: ASL 2.0
 Summary: Kata guest initrd and image build scripts
 URL: %{git0}
@@ -145,6 +145,11 @@ fi
 
 
 %changelog
+* Fri Jun 26 2020 Pavel Mores <pmores@redhat.com> - 1.11.1-1
+- Update to version 1.11.1
+- Make fedora-kata-osbuilder.sh distro-agnostic
+- Rename fedora-kata-osbuilder.sh to kata-osbuilder.sh
+
 * Tue Jun 02 2020 Fabiano Fidêncio <fidencio@redhat.com> - 1.11.0-2
 - Add VFIO modules to the initrd
 
