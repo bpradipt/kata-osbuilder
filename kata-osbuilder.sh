@@ -17,7 +17,7 @@ trap exit_handler EXIT
 readonly GENERATED_IMAGE="${DRACUT_IMAGES}/kata-containers.img"
 readonly GENERATED_INITRD="${DRACUT_IMAGES}/kata-containers-initrd.img"
 
-readonly DISTRO=`grep '^ID' /etc/os-release | awk '{print $2}' FS='='`
+readonly DISTRO=`grep '^ID=' /etc/os-release | awk '{print $2}' FS='='`
 
 
 KVERSION=`uname -r`
